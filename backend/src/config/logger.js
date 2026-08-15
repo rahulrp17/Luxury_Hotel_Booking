@@ -1,5 +1,6 @@
 const winston = require("winston");
 const path = require("path");
+const fs = require("fs");
 
 const { combine, timestamp, printf, colorize, align, errors } = winston.format;
 
@@ -23,6 +24,47 @@ const level = () => {
   return isDevelopment ? "debug" : "warn";
 };
 
+const logDir = path.join(process.cwd(), "logs");
+
+// File transports are only used when the filesystem is writable (Render, local
+// dev). Serverless platforms (Vercel) mount a read-only root except `/tmp`, so
+// attempting to create `logs/` at import time would crash the function before
+// the first request. In that case we fall back to console-only logging.
+const fileTransports = [];
+try {
+  fs.mkdirSync(logDir, { recursive: true });
+  fileTransports.push(
+    new winston.transports.File({
+      filename: path.join(logDir, "error.log"),
+      level: "error",
+      maxsize: 5242880, // 5MB
+      maxFiles: 5,
+    }),
+    new winston.transports.File({
+      filename: path.join(logDir, "combined.log"),
+      maxsize: 5242880, // 5MB
+      maxFiles: 5,
+    })
+  );
+} catch (err) {
+  // Read-only filesystem (e.g. Vercel serverless) — log to console only.
+}
+
+const exceptionHandlers = fileTransports.length
+  ? [
+      new winston.transports.File({
+        filename: path.join(logDir, "exceptions.log"),
+      }),
+    ]
+  : [];
+const rejectionHandlers = fileTransports.length
+  ? [
+      new winston.transports.File({
+        filename: path.join(logDir, "rejections.log"),
+      }),
+    ]
+  : [];
+
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || level(),
   levels,
@@ -41,30 +83,10 @@ const logger = winston.createLogger({
         logFormat
       ),
     }),
-    // Error log file
-    new winston.transports.File({
-      filename: path.join(process.cwd(), "logs", "error.log"),
-      level: "error",
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
-    // Combined log file
-    new winston.transports.File({
-      filename: path.join(process.cwd(), "logs", "combined.log"),
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
+    ...fileTransports,
   ],
-  exceptionHandlers: [
-    new winston.transports.File({
-      filename: path.join(process.cwd(), "logs", "exceptions.log"),
-    }),
-  ],
-  rejectionHandlers: [
-    new winston.transports.File({
-      filename: path.join(process.cwd(), "logs", "rejections.log"),
-    }),
-  ],
+  exceptionHandlers,
+  rejectionHandlers,
 });
 
 module.exports = logger;

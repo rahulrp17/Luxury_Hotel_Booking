@@ -1,18 +1,12 @@
 import { motion } from "framer-motion";
 import useAsyncData from "./useAsyncData";
 import { offerService } from "@/services";
-import { OFFER_TYPES } from "@/constants/enums";
 import { Container, Section, SectionTitle } from "@/components/layout";
 import { Reveal, SkeletonLoader, Image } from "@/components/ui";
-import { formatCurrency, formatDate } from "@/utils/formatters";
+import { formatDate } from "@/utils/formatters";
+import { getOfferDiscountLabel } from "@/utils/offerUtils";
 import { fadeInUp, staggerContainer, EASE } from "@/theme/animations";
 import { getFallbackAsset } from "@/constants/assets";
-
-const discountLabel = (offer) => {
-  if (offer.type === OFFER_TYPES.PERCENTAGE) return `${offer.value}% OFF`;
-  if (offer.type === OFFER_TYPES.FREE_NIGHT) return "Free night";
-  return `${formatCurrency(offer.value)} off`;
-};
 
 const OfferCard = ({ offer, fallback }) => (
   <motion.article
@@ -35,7 +29,7 @@ const OfferCard = ({ offer, fallback }) => (
         className="absolute inset-0"
       />
       <span className="absolute left-3 top-3 z-10 badge bg-gold-500 text-brand-950">
-        {discountLabel(offer)}
+        {getOfferDiscountLabel(offer)}
       </span>
     </div>
     <div className="flex flex-1 flex-col p-6">

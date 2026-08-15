@@ -1,6 +1,7 @@
 const amenityService = require("./amenity.service");
 const ApiResponse = require("../../utils/ApiResponse");
 const asyncHandler = require("../../utils/asyncHandler");
+const ApiError = require("../../utils/ApiError");
 
 const getAmenities = asyncHandler(async (req, res) => {
   const { amenities, pagination } = await amenityService.getAmenities(req.query);
@@ -28,10 +29,25 @@ const deleteAmenity = asyncHandler(async (req, res) => {
   return ApiResponse.success(res, "Amenity deleted.");
 });
 
+const uploadAmenityImage = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    throw ApiError.badRequest("Please upload an image.");
+  }
+  const amenity = await amenityService.uploadImage(req.params.id, req.file);
+  return ApiResponse.success(res, "Amenity image uploaded.", amenity);
+});
+
+const removeAmenityImage = asyncHandler(async (req, res) => {
+  const amenity = await amenityService.removeImage(req.params.id);
+  return ApiResponse.success(res, "Amenity image removed.", amenity);
+});
+
 module.exports = {
   getAmenities,
   getAmenity,
   createAmenity,
   updateAmenity,
   deleteAmenity,
+  uploadAmenityImage,
+  removeAmenityImage,
 };

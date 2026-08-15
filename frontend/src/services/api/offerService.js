@@ -19,6 +19,20 @@ export const offerService = {
 
   adminUpdate: (id, payload) =>
     axiosInstance.put(`${API.OFFERS.UPDATE}/${id}`, payload).then((res) => res.data),
+
+  adminUploadBanner: (id, file, onProgress) => {
+    const formData = new FormData();
+    formData.append("banner", file);
+    return axiosInstance
+      .post(`${API.OFFERS.BANNER}/${id}/banner`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: onProgress,
+      })
+      .then((res) => res.data);
+  },
+
+  adminRemoveBanner: (id) =>
+    axiosInstance.delete(`${API.OFFERS.BANNER}/${id}/banner`).then((res) => res.data),
 };
 
 export default offerService;

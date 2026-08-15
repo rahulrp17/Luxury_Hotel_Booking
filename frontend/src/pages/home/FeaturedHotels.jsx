@@ -65,7 +65,6 @@ const HotelCard = memo(({ hotel, priority = false }) => {
 
         <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full border border-[#D4AF37]/40 bg-[#141414]/90 px-3 py-1.5 text-sm font-semibold text-[#D4AF37] shadow-lg backdrop-blur-xl">
           <Star size={13} fill="currentColor" />
-
           {hotel.rating} ({hotel.totalReviews})
         </span>
       </div>
@@ -106,7 +105,7 @@ const HotelCard = memo(({ hotel, priority = false }) => {
           className="flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#A97718] via-[#D4AF37] to-[#F1D67A] text-[15px] font-semibold text-black transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(212,175,55,.55)]"
           aria-label={`View ${hotel.name}`}
         >
-           Explore Hotel
+          Explore Hotel
           <ArrowRight size={16} />
         </Link>
       </div>
@@ -138,7 +137,7 @@ const FeaturedHotels = ({ hotels = [], loading = false, error = null }) => {
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: false }}
           transition={{ duration: 0.8 }}
           className="mx-auto max-w-3xl text-center"
         >
@@ -189,6 +188,15 @@ const FeaturedHotels = ({ hotels = [], loading = false, error = null }) => {
                   ? "We couldn't load the featured hotels right now."
                   : "Featured hotels are being curated — check back soon."}
               </p>
+              {error && (
+                <button
+                  type="button"
+                  onClick={() => refetch()}
+                  className="mt-5 rounded-xl bg-gradient-to-r from-[#A97718] via-[#D4AF37] to-[#F1D67A] px-6 py-2.5 text-sm font-semibold text-black transition hover:scale-[1.03]"
+                >
+                  Try again
+                </button>
+              )}
             </div>
           ) : (
             <Swiper

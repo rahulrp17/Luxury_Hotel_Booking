@@ -6,6 +6,7 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
 import { ROUTES, buildPath } from "@/constants/routes";
+import PageLoader from "@/components/layout/PageLoader";
 
 // Code-split the Home page; it suspends into the app-level Suspense/PageLoader.
 const Home = lazy(() => import("@/pages/Home"));
@@ -42,50 +43,102 @@ const About = lazy(() => import("@/pages/luxury/About"));
 const Contact = lazy(() => import("@/pages/luxury/Contact"));
 const Offers = lazy(() => import("@/pages/luxury/Offers"));
 const Destinations = lazy(() => import("@/pages/luxury/Destinations"));
-const DestinationDetail = lazy(() => import("@/pages/luxury/DestinationDetail"));
+const DestinationDetail = lazy(
+  () => import("@/pages/luxury/DestinationDetail"),
+);
 
 // ── Collection pages (hotels / experiences / dining menus) ────────────
-const BeachResorts = lazy(() => import("@/pages/luxury/collections/BeachResorts"));
-const MountainResorts = lazy(() => import("@/pages/luxury/collections/MountainResorts"));
+const BeachResorts = lazy(
+  () => import("@/pages/luxury/collections/BeachResorts"),
+);
+const MountainResorts = lazy(
+  () => import("@/pages/luxury/collections/MountainResorts"),
+);
 const CityHotels = lazy(() => import("@/pages/luxury/collections/CityHotels"));
-const PrivateVillas = lazy(() => import("@/pages/luxury/collections/PrivateVillas"));
-const LuxuryResorts = lazy(() => import("@/pages/luxury/collections/LuxuryResorts"));
-const SignatureCollection = lazy(() => import("@/pages/luxury/collections/SignatureCollection"));
+const PrivateVillas = lazy(
+  () => import("@/pages/luxury/collections/PrivateVillas"),
+);
+const LuxuryResorts = lazy(
+  () => import("@/pages/luxury/collections/LuxuryResorts"),
+);
+const SignatureCollection = lazy(
+  () => import("@/pages/luxury/collections/SignatureCollection"),
+);
 const Rooms = lazy(() => import("@/pages/luxury/collections/Rooms"));
 const Suites = lazy(() => import("@/pages/luxury/collections/Suites"));
-const PresidentialSuites = lazy(() => import("@/pages/luxury/collections/PresidentialSuites"));
-const FamilyVillas = lazy(() => import("@/pages/luxury/collections/FamilyVillas"));
-const ExperienceSpa = lazy(() => import("@/pages/luxury/collections/ExperienceSpa"));
-const ExperienceWellness = lazy(() => import("@/pages/luxury/collections/ExperienceWellness"));
-const ExperienceYoga = lazy(() => import("@/pages/luxury/collections/ExperienceYoga"));
-const ExperienceAdventure = lazy(() => import("@/pages/luxury/collections/ExperienceAdventure"));
-const ExperiencePrivateDining = lazy(() => import("@/pages/luxury/collections/ExperiencePrivateDining"));
-const ExperienceSafari = lazy(() => import("@/pages/luxury/collections/ExperienceSafari"));
-const ExperienceWine = lazy(() => import("@/pages/luxury/collections/ExperienceWine"));
-const DiningRestaurants = lazy(() => import("@/pages/luxury/collections/DiningRestaurants"));
-const DiningBuffet = lazy(() => import("@/pages/luxury/collections/DiningBuffet"));
-const DiningChefsTable = lazy(() => import("@/pages/luxury/collections/DiningChefsTable"));
-const DiningPrivate = lazy(() => import("@/pages/luxury/collections/DiningPrivate"));
+const PresidentialSuites = lazy(
+  () => import("@/pages/luxury/collections/PresidentialSuites"),
+);
+const FamilyVillas = lazy(
+  () => import("@/pages/luxury/collections/FamilyVillas"),
+);
+const ExperienceSpa = lazy(
+  () => import("@/pages/luxury/collections/ExperienceSpa"),
+);
+const ExperienceWellness = lazy(
+  () => import("@/pages/luxury/collections/ExperienceWellness"),
+);
+const ExperienceYoga = lazy(
+  () => import("@/pages/luxury/collections/ExperienceYoga"),
+);
+const ExperienceAdventure = lazy(
+  () => import("@/pages/luxury/collections/ExperienceAdventure"),
+);
+const ExperiencePrivateDining = lazy(
+  () => import("@/pages/luxury/collections/ExperiencePrivateDining"),
+);
+const ExperienceSafari = lazy(
+  () => import("@/pages/luxury/collections/ExperienceSafari"),
+);
+const ExperienceWine = lazy(
+  () => import("@/pages/luxury/collections/ExperienceWine"),
+);
+const DiningRestaurants = lazy(
+  () => import("@/pages/luxury/collections/DiningRestaurants"),
+);
+const DiningBuffet = lazy(
+  () => import("@/pages/luxury/collections/DiningBuffet"),
+);
+const DiningChefsTable = lazy(
+  () => import("@/pages/luxury/collections/DiningChefsTable"),
+);
+const DiningPrivate = lazy(
+  () => import("@/pages/luxury/collections/DiningPrivate"),
+);
 const DiningBars = lazy(() => import("@/pages/luxury/collections/DiningBars"));
-const DiningRooftop = lazy(() => import("@/pages/luxury/collections/DiningRooftop"));
+const DiningRooftop = lazy(
+  () => import("@/pages/luxury/collections/DiningRooftop"),
+);
 
 // ── About family + contact-service pages ─────────────────────────────
-const LuxuryPhilosophy = lazy(() => import("@/pages/luxury/collections/LuxuryPhilosophy"));
+const LuxuryPhilosophy = lazy(
+  () => import("@/pages/luxury/collections/LuxuryPhilosophy"),
+);
 const Awards = lazy(() => import("@/pages/luxury/collections/Awards"));
-const Sustainability = lazy(() => import("@/pages/luxury/collections/Sustainability"));
+const Sustainability = lazy(
+  () => import("@/pages/luxury/collections/Sustainability"),
+);
 const Press = lazy(() => import("@/pages/luxury/collections/Press"));
 const Careers = lazy(() => import("@/pages/luxury/collections/Careers"));
-const Reservations = lazy(() => import("@/pages/luxury/collections/Reservations"));
-const CustomerSupport = lazy(() => import("@/pages/luxury/collections/CustomerSupport"));
+const Reservations = lazy(
+  () => import("@/pages/luxury/collections/Reservations"),
+);
+const CustomerSupport = lazy(
+  () => import("@/pages/luxury/collections/CustomerSupport"),
+);
 const Locations = lazy(() => import("@/pages/luxury/collections/Locations"));
 const Weddings = lazy(() => import("@/pages/luxury/collections/Weddings"));
-const CorporateEvents = lazy(() => import("@/pages/luxury/collections/CorporateEvents"));
+const CorporateEvents = lazy(
+  () => import("@/pages/luxury/collections/CorporateEvents"),
+);
 
 // ── Utility / legal / payment-outcome pages ──────────────────────
 const Faq = lazy(() => import("@/pages/luxury/Faq"));
 const PrivacyPolicy = lazy(() => import("@/pages/luxury/PrivacyPolicy"));
 const Terms = lazy(() => import("@/pages/luxury/Terms"));
-const CancellationPolicy = lazy(() => import("@/pages/luxury/CancellationPolicy"));
+const CancellationPolicy = lazy(
+  () => import("@/pages/luxury/CancellationPolicy"),
+);
 const PaymentSuccess = lazy(() => import("@/pages/luxury/PaymentSuccess"));
 const PaymentFailed = lazy(() => import("@/pages/luxury/PaymentFailed"));
 const NotFound = lazy(() => import("@/pages/luxury/NotFound"));
@@ -112,13 +165,16 @@ const NotFound = lazy(() => import("@/pages/luxury/NotFound"));
  */
 const RedirectToBookingDetail = () => {
   const { id } = useParams();
-  return <Navigate to={buildPath(ROUTES.ACCOUNT_BOOKING_DETAIL, { id })} replace />;
+  return (
+    <Navigate to={buildPath(ROUTES.ACCOUNT_BOOKING_DETAIL, { id })} replace />
+  );
 };
 
 const AppRoutes = () => (
   <Routes>
     {/* ── Public luxury shell — Navbar + Footer ─────────────────── */}
     <Route element={<Layout />}>
+      <Route path="/loading" element={<PageLoader />} />
       <Route path={ROUTES.HOME} element={<Home />} />
       <Route path={ROUTES.HOTELS} element={<Hotels />} />
       <Route path={ROUTES.HOTEL_DETAIL} element={<HotelDetails />} />
@@ -126,7 +182,10 @@ const AppRoutes = () => (
       {/* Search-aware CTA flows dispatch the destination into the search slice
           and land on /hotels, which renders the matching results. Legacy
           /search URLs redirect there too instead of a dead placeholder. */}
-      <Route path={ROUTES.SEARCH} element={<Navigate to={ROUTES.HOTELS} replace />} />
+      <Route
+        path={ROUTES.SEARCH}
+        element={<Navigate to={ROUTES.HOTELS} replace />}
+      />
 
       {/* Luxury brand / marketing (dark full-bleed pages) */}
       <Route path={ROUTES.EXPERIENCES} element={<Experiences />} />
@@ -143,16 +202,31 @@ const AppRoutes = () => (
       <Route path={ROUTES.CITY_HOTELS} element={<CityHotels />} />
       <Route path={ROUTES.PRIVATE_VILLAS} element={<PrivateVillas />} />
       <Route path={ROUTES.LUXURY_RESORTS} element={<LuxuryResorts />} />
-      <Route path={ROUTES.SIGNATURE_COLLECTION} element={<SignatureCollection />} />
+      <Route
+        path={ROUTES.SIGNATURE_COLLECTION}
+        element={<SignatureCollection />}
+      />
       <Route path={ROUTES.ROOMS} element={<Rooms />} />
       <Route path={ROUTES.SUITES} element={<Suites />} />
-      <Route path={ROUTES.PRESIDENTIAL_SUITES} element={<PresidentialSuites />} />
+      <Route
+        path={ROUTES.PRESIDENTIAL_SUITES}
+        element={<PresidentialSuites />}
+      />
       <Route path={ROUTES.FAMILY_VILLAS} element={<FamilyVillas />} />
       <Route path={ROUTES.EXPERIENCE_SPA} element={<ExperienceSpa />} />
-      <Route path={ROUTES.EXPERIENCE_WELLNESS} element={<ExperienceWellness />} />
+      <Route
+        path={ROUTES.EXPERIENCE_WELLNESS}
+        element={<ExperienceWellness />}
+      />
       <Route path={ROUTES.EXPERIENCE_YOGA} element={<ExperienceYoga />} />
-      <Route path={ROUTES.EXPERIENCE_ADVENTURE} element={<ExperienceAdventure />} />
-      <Route path={ROUTES.EXPERIENCE_PRIVATE_DINING} element={<ExperiencePrivateDining />} />
+      <Route
+        path={ROUTES.EXPERIENCE_ADVENTURE}
+        element={<ExperienceAdventure />}
+      />
+      <Route
+        path={ROUTES.EXPERIENCE_PRIVATE_DINING}
+        element={<ExperiencePrivateDining />}
+      />
       <Route path={ROUTES.EXPERIENCE_SAFARI} element={<ExperienceSafari />} />
       <Route path={ROUTES.EXPERIENCE_WINE} element={<ExperienceWine />} />
       <Route path={ROUTES.DINING_RESTAURANTS} element={<DiningRestaurants />} />
@@ -177,7 +251,10 @@ const AppRoutes = () => (
       <Route path={ROUTES.FAQ} element={<Faq />} />
       <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
       <Route path={ROUTES.TERMS} element={<Terms />} />
-      <Route path={ROUTES.CANCELLATION_POLICY} element={<CancellationPolicy />} />
+      <Route
+        path={ROUTES.CANCELLATION_POLICY}
+        element={<CancellationPolicy />}
+      />
       <Route path={ROUTES.PAYMENT_SUCCESS} element={<PaymentSuccess />} />
       <Route path={ROUTES.PAYMENT_FAILED} element={<PaymentFailed />} />
 
@@ -202,15 +279,33 @@ const AppRoutes = () => (
 
     {/* ── Legacy standalone account URLs → canonical /account/* ──── */}
     <Route element={<ProtectedRoute />}>
-      <Route path={ROUTES.PROFILE_PAGE} element={<Navigate to={ROUTES.PROFILE} replace />} />
-      <Route path={ROUTES.NOTIFICATIONS_PAGE} element={<Navigate to={ROUTES.NOTIFICATIONS} replace />} />
-      <Route path={ROUTES.WISHLIST} element={<Navigate to={ROUTES.ACCOUNT_WISHLIST} replace />} />
-      <Route path={ROUTES.MY_BOOKINGS} element={<Navigate to={ROUTES.BOOKINGS} replace />} />
-      <Route path={ROUTES.MY_BOOKING_DETAIL} element={<RedirectToBookingDetail />} />
+      <Route
+        path={ROUTES.PROFILE_PAGE}
+        element={<Navigate to={ROUTES.PROFILE} replace />}
+      />
+      <Route
+        path={ROUTES.NOTIFICATIONS_PAGE}
+        element={<Navigate to={ROUTES.NOTIFICATIONS} replace />}
+      />
+      <Route
+        path={ROUTES.WISHLIST}
+        element={<Navigate to={ROUTES.ACCOUNT_WISHLIST} replace />}
+      />
+      <Route
+        path={ROUTES.MY_BOOKINGS}
+        element={<Navigate to={ROUTES.BOOKINGS} replace />}
+      />
+      <Route
+        path={ROUTES.MY_BOOKING_DETAIL}
+        element={<RedirectToBookingDetail />}
+      />
       {/* Deprecated plural detail URL → canonical singular detail (safe for old
           notification links / browser history). The exact /account/bookings
           list route still wins for the two-segment URL — no conflict. */}
-      <Route path={ROUTES.LEGACY_BOOKING_DETAIL} element={<RedirectToBookingDetail />} />
+      <Route
+        path={ROUTES.LEGACY_BOOKING_DETAIL}
+        element={<RedirectToBookingDetail />}
+      />
     </Route>
 
     {/* ── User dashboard — DashboardLayout (no public Navbar) ───── */}
@@ -219,7 +314,10 @@ const AppRoutes = () => (
         <Route path={ROUTES.ACCOUNT} element={<AccountOverview />} />
         <Route path={ROUTES.PROFILE} element={<Profile />} />
         <Route path={ROUTES.BOOKINGS} element={<MyBookings />} />
-        <Route path={ROUTES.ACCOUNT_BOOKING_DETAIL} element={<BookingDetail />} />
+        <Route
+          path={ROUTES.ACCOUNT_BOOKING_DETAIL}
+          element={<BookingDetail />}
+        />
         <Route path={ROUTES.NOTIFICATIONS} element={<Notifications />} />
         <Route path={ROUTES.ACCOUNT_WISHLIST} element={<Wishlist />} />
       </Route>
@@ -240,7 +338,10 @@ const AppRoutes = () => (
       </Route>
     </Route>
 
-    <Route path={ROUTES.ADMIN} element={<Navigate to={ROUTES.ADMIN_DASHBOARD} replace />} />
+    <Route
+      path={ROUTES.ADMIN}
+      element={<Navigate to={ROUTES.ADMIN_DASHBOARD} replace />}
+    />
   </Routes>
 );
 

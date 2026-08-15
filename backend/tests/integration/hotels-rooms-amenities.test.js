@@ -23,6 +23,45 @@ const {
   uniq,
 } = require("../helpers/factories");
 
+/**
+ * Happy-path image uploads are exercised against a mocked Cloudinary so the
+ * suites stay hermetic (no real network calls). The `multer-storage-cloudinary`
+ * adapter drives `cloudinary.uploader.upload_stream(opts, cb)` and assigns
+ * `file.path`/`file.filename` from the response — mirroring a real upload.
+ */
+jest.mock("cloudinary", () => {
+  const { Writable } = require("stream");
+  const makeResult = (folder) => {
+    const suffix = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+    return {
+      secure_url: `https://res.cloudinary.com/test/${folder}/mock-${suffix}.jpg`,
+      public_id: `${folder}/mock-${suffix}`,
+      bytes: 1234,
+    };
+  };
+  return {
+    v2: {
+      config: jest.fn(),
+      uploader: {
+        upload: jest.fn(),
+        upload_stream: jest.fn((options, callback) => {
+          const result = makeResult(options.folder || "luxury-hotel/amenities");
+          return new Writable({
+            write(_chunk, _encoding, next) {
+              next();
+            },
+            final(next) {
+              callback(null, result);
+              next();
+            },
+          });
+        }),
+        destroy: jest.fn().mockResolvedValue({ result: "ok" }),
+      },
+    },
+  };
+});
+
 /** ISO date strings for fixtures, e.g. "+3" = 3 days from now. */
 const isoDate = (offsetDays) => new Date(Date.now() + offsetDays * 86400000).toISOString();
 
@@ -556,5 +595,146 @@ describe("AMENITIES — admin CRUD", () => {
     const user = await createUser();
     const res = await agent().post("/api/v1/amenities").set(authHeaders(user)).send(amenityBody());
     expect(res.status).toBe(403);
+  });
+
+  test("POST /:id/image without token → 401; non-image upload → 400", async () => {
+    const amenity = await seedAmenities({ name: "Image Amenity" });
+
+    const anon = await agent().post(`/api/v1/amenities/${amenity._id}/image`);
+    expect(anon.status).toBe(401);
+
+    const admin = await createAdmin();
+    const bad = await agent()
+      .post(`/api/v1/amenities/${amenity._id}/image`)
+      .set(authHeaders(admin))
+      .attach("image", Buffer.from("not-an-image"), "x.txt");
+    // Multer imageFileFilter rejects non-image mimetypes.
+    expect(bad.status).toBe(400);
+    expect(bad.body.message).toMatch(/Only image files/i);
+  });
+
+  test("DELETE /:id/image without token → 401; unknown id → 404 (ADMIN)", async () => {
+    const amenity = await seedAmenities({ name: "Removable Amenity" });
+
+    const anon = await agent().delete(`/api/v1/amenities/${amenity._id}/image`);
+    expect(anon.status).toBe(401);
+
+    const admin = await createAdmin();
+    const missing = await agent()
+      .delete("/api/v1/amenities/not-a-real-id/image")
+      .set(authHeaders(admin));
+    expect([400, 404]).toContain(missing.status);
+  });
+});
+
+describe("AMENITIES — image lifecycle (create → edit → upload → replace → remove → delete)", () => {
+  const amenityBody = (overrides = {}) => ({
+    name: `Amenity ${uniq("life")}`,
+    icon: "wifi",
+    category: "HOTEL",
+    description: "A hotel amenity",
+    ...overrides,
+  });
+
+  const tinyImage = () => Buffer.from("fake-image-bytes");
+  const attachImage = (req, bytes = tinyImage(), filename = "amenity.jpg") =>
+    req.attach("image", bytes, filename);
+
+  test("Full lifecycle: create, edit without image (image preserved), edit with new image (replaced), remove image, delete", async () => {
+    // ── CREATE ────────────────────────────────────────────────────────────
+    const created = await agent()
+      .post("/api/v1/amenities")
+      .set(adminToken)
+      .send(amenityBody());
+    expect(created.status).toBe(201);
+    const id = created.body.data._id;
+
+    // ── UPLOAD image on the new record ────────────────────────────────────
+    const upload = await attachImage(
+      agent().post(`/api/v1/amenities/${id}/image`).set(adminToken)
+    );
+    expect(upload.status).toBe(200);
+    expect(upload.body.data.image).toMatch(/res\.cloudinary\.com/);
+    expect(upload.body.data.imagePublicId).toMatch(/luxury-hotel\/amenities/);
+
+    const firstImage = upload.body.data.image;
+    const firstPublicId = upload.body.data.imagePublicId;
+
+    // ── EDIT fields WITHOUT a new image → old image preserved ─────────────
+    const editNoImage = await agent()
+      .put(`/api/v1/amenities/${id}`)
+      .set(adminToken)
+      .send({ name: "Renamed Amenity", description: "Updated description" });
+    expect(editNoImage.status).toBe(200);
+    expect(editNoImage.body.data.name).toBe("Renamed Amenity");
+    expect(editNoImage.body.data.description).toBe("Updated description");
+    expect(editNoImage.body.data.image).toBe(firstImage);
+    expect(editNoImage.body.data.imagePublicId).toBe(firstPublicId);
+
+    // ── EDIT + UPLOAD a NEW image → replaces the old asset ────────────────
+    const replace = await attachImage(
+      agent().post(`/api/v1/amenities/${id}/image`).set(adminToken),
+      Buffer.from("replacement-image-bytes"),
+      "amenity2.jpg"
+    );
+    expect(replace.status).toBe(200);
+    expect(replace.body.data.imagePublicId).not.toBe(firstPublicId);
+    expect(replace.body.data.image).not.toBe(firstImage);
+
+    // ── REMOVE image ──────────────────────────────────────────────────────
+    const removed = await agent()
+      .delete(`/api/v1/amenities/${id}/image`)
+      .set(adminToken);
+    expect(removed.status).toBe(200);
+    expect(removed.body.data.image).toBeUndefined();
+    expect(removed.body.data.imagePublicId).toBeUndefined();
+
+    // ── DELETE ────────────────────────────────────────────────────────────
+    const del = await agent().delete(`/api/v1/amenities/${id}`).set(adminToken);
+    expect(del.status).toBe(200);
+    expect(del.body.data).toBeUndefined();
+
+    const gone = await agent().get(`/api/v1/amenities/${id}`);
+    expect(gone.status).toBe(404);
+  });
+
+  test("Edit without an image keeps the original image and imagePublicId intact", async () => {
+    const amenity = await seedAmenities({
+      name: `Keep Image ${uniq("keep")}`,
+      image: "https://res.cloudinary.com/test/luxury-hotel/amenities/keep-me.jpg",
+      imagePublicId: "luxury-hotel/amenities/keep-me",
+    });
+
+    const res = await agent()
+      .put(`/api/v1/amenities/${amenity._id}`)
+      .set(adminToken)
+      .send({ category: "WELLNESS", description: "Edited without touching the image" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.category).toBe("WELLNESS");
+    expect(res.body.data.image).toBe(
+      "https://res.cloudinary.com/test/luxury-hotel/amenities/keep-me.jpg"
+    );
+    expect(res.body.data.imagePublicId).toBe("luxury-hotel/amenities/keep-me");
+  });
+
+  test("Remove image clears image + imagePublicId for an amenity that had one", async () => {
+    const amenity = await seedAmenities({
+      name: `Remove Me ${uniq("rm")}`,
+      image: "https://res.cloudinary.com/test/luxury-hotel/amenities/remove-me.jpg",
+      imagePublicId: "luxury-hotel/amenities/remove-me",
+    });
+
+    const res = await agent()
+      .delete(`/api/v1/amenities/${amenity._id}/image`)
+      .set(adminToken);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.image).toBeUndefined();
+    expect(res.body.data.imagePublicId).toBeUndefined();
+
+    const fresh = await agent().get(`/api/v1/amenities/${amenity._id}`);
+    expect(fresh.body.data.image).toBeUndefined();
+    expect(fresh.body.data.imagePublicId).toBeUndefined();
   });
 });

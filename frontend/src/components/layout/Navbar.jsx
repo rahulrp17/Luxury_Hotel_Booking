@@ -35,6 +35,7 @@ const HOTELS_MEGA = {
         { label: "Mountain Resorts", to: ROUTES.MOUNTAIN_RESORTS },
         { label: "City Hotels", to: ROUTES.CITY_HOTELS },
         { label: "Private Villas", to: ROUTES.PRIVATE_VILLAS },
+        { label: "Offers", to: ROUTES.OFFERS },
       ],
     },
     {

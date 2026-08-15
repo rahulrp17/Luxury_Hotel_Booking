@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -53,8 +53,12 @@ import SkeletonLoader from "@/components/ui/SkeletonLoader";
 import { amenityService, notify } from "@/services";
 import { AMENITY_CATEGORIES } from "@/constants/enums";
 import { fadeInUp, staggerContainer } from "@/theme/animations";
+import { FALLBACK_ASSETS } from "@/constants/assets";
 
 const PAGE_SIZE = 8;
+
+const IMAGE_ACCEPT = "image/jpeg,image/png,image/webp,image/avif";
+const IMAGE_MAX_SIZE = 5 * 1024 * 1024; // 5MB — matches backend multer limit
 
 /* ========================================================================= */
 /* Form                                                                      */
@@ -345,15 +349,150 @@ const deleteIconCls =
   "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-red-500/20 bg-white/[0.03] text-[#B8B2A5] transition-colors hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60";
 
 /* ========================================================================= */
+/* Thumbnail with fallback                                                   */
+/* ========================================================================= */
+
+/**
+ * Amenity thumbnail for the table's Image column. Falls back to a local asset
+ * when the URL is missing or fails to load, and a gold placeholder when there
+ * is nothing to show. Clicking the thumbnail opens the larger preview.
+ */
+const AmenityThumb = ({ image, name, onClick }) => {
+  const [src, setSrc] = useState(image || "");
+  const fallback = FALLBACK_ASSETS.amenity;
+
+  useEffect(() => {
+    setSrc(image || "");
+  }, [image]);
+
+  if (!src) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={`Preview ${name} image`}
+        className="flex h-12 w-16 shrink-0 items-center justify-center rounded-xl border border-[#D4AF37]/20 bg-white/[0.03] text-[#77736B] transition-colors hover:border-[#D4AF37]/40 hover:text-[#E7C977]"
+      >
+        <Icon name="camera" size={17} />
+      </button>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={`Preview ${name} image`}
+      className="group/thumb relative shrink-0 overflow-hidden rounded-xl border border-[#D4AF37]/15 transition-colors hover:border-[#D4AF37]/45"
+    >
+      <img
+        src={src}
+        alt={name}
+        onError={() => setSrc(fallback)}
+        className="h-12 w-16 object-cover transition-transform duration-500 group-hover/thumb:scale-105"
+      />
+    </button>
+  );
+};
+
+/* ========================================================================= */
+/* Full-screen image preview overlay                                         */
+/* ========================================================================= */
+
+const ImagePreview = ({ src, alt, onClose }) => {
+  useEffect(() => {
+    if (!src) return;
+    const handler = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [src, onClose]);
+
+  if (!src) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Preview ${alt}`}
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close preview"
+        className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/60 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+      >
+        <Icon name="close" size={18} />
+      </button>
+      <img
+        src={src}
+        alt={alt}
+        onClick={(e) => e.stopPropagation()}
+        className="max-h-[85vh] max-w-full rounded-xl border border-[#D4AF37]/25 shadow-[0_0_60px_rgba(212,175,55,0.2)]"
+      />
+    </div>
+  );
+};
+
+/* ========================================================================= */
 /* Component                                                                 */
 /* ========================================================================= */
 
 const AdminAmenities = () => {
   const queryClient = useQueryClient();
+  const imageFileInputRef = useRef(null);
 
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [removeExistingImage, setRemoveExistingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(null);
+  const [previewTarget, setPreviewTarget] = useState(null);
+
+  /* ======================================================================= */
+  /* Image helpers                                                           */
+  /* ======================================================================= */
+
+  const clearImage = () => {
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setSelectedImage(null);
+    setImagePreview(null);
+    setRemoveExistingImage(false);
+    setUploadProgress(null);
+    if (imageFileInputRef.current) imageFileInputRef.current.value = "";
+  };
+
+  useEffect(() => {
+    return () => {
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+    };
+  }, [imagePreview]);
+
+  const onImageSelect = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      notify.error("Please select a valid image file.");
+      return;
+    }
+
+    if (file.size > IMAGE_MAX_SIZE) {
+      notify.error("Image must be 5MB or smaller.");
+      return;
+    }
+
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+
+    setSelectedImage(file);
+    setImagePreview(URL.createObjectURL(file));
+    setRemoveExistingImage(false);
+  };
 
   /* ======================================================================= */
   /* React Hook Form                                                         */
@@ -405,12 +544,33 @@ const AdminAmenities = () => {
   /* ======================================================================= */
 
   const saveMutation = useMutation({
-    mutationFn: (payload) => {
-      if (editing) {
-        return amenityService.adminUpdate(editing._id, payload);
+    mutationFn: async ({ payload, file, editingId, shouldRemoveImage }) => {
+      let amenity;
+
+      if (editingId) {
+        amenity = (await amenityService.adminUpdate(editingId, payload)).data;
+      } else {
+        amenity = (await amenityService.adminCreate(payload)).data;
       }
 
-      return amenityService.adminCreate(payload);
+      if (shouldRemoveImage) {
+        const removed = await amenityService.adminRemoveImage(amenity._id);
+        amenity = removed?.data ?? amenity;
+      }
+
+      if (file && amenity?._id) {
+        const uploaded = await amenityService.adminUploadImage(
+          amenity._id,
+          file,
+          (e) => {
+            const percent = e.total ? Math.round((e.loaded / e.total) * 100) : 0;
+            setUploadProgress(percent);
+          }
+        );
+        amenity = uploaded?.data ?? amenity;
+      }
+
+      return amenity;
     },
 
     onSuccess: () => {
@@ -424,6 +584,7 @@ const AdminAmenities = () => {
       setEditing(null);
 
       reset(EMPTY_FORM);
+      clearImage();
 
       invalidate();
     },
@@ -435,6 +596,8 @@ const AdminAmenities = () => {
           ? "We couldn't update this amenity."
           : "We couldn't create this amenity."
       );
+
+      setUploadProgress(null);
     },
   });
 
@@ -464,6 +627,7 @@ const AdminAmenities = () => {
     setEditing(null);
 
     reset(EMPTY_FORM);
+    clearImage();
 
     setModalOpen(true);
   };
@@ -482,6 +646,8 @@ const AdminAmenities = () => {
         amenity.category || AMENITY_CATEGORIES.ROOM,
       description: amenity.description || "",
     });
+
+    clearImage();
 
     setModalOpen(true);
   };
@@ -510,7 +676,12 @@ const AdminAmenities = () => {
         values.description?.trim() || "",
     };
 
-    saveMutation.mutate(payload);
+    saveMutation.mutate({
+      payload,
+      file: selectedImage,
+      editingId: editing?._id,
+      shouldRemoveImage: removeExistingImage,
+    });
   };
 
   /* ======================================================================= */
@@ -670,109 +841,115 @@ const AdminAmenities = () => {
               </motion.div>
             ) : (
               /* ========================================================= */
-              /* AMENITIES                                                   */
+              /* AMENITIES TABLE                                             */
               /* ========================================================= */
 
-              <motion.ul
-                variants={staggerContainer(0.06)}
-                className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+              <motion.div
+                variants={fadeInUp}
+                className="mt-8 overflow-hidden rounded-2xl border border-[#D4AF37]/18 bg-white/[0.04] backdrop-blur-xl shadow-[0_20px_70px_rgba(0,0,0,0.4)]"
               >
-                {amenities.map((amenity) => (
-                  <motion.li
-                    key={amenity._id}
-                    variants={fadeInUp}
-                  >
-                    <div className="group flex h-full flex-col rounded-2xl border border-[#D4AF37]/18 bg-white/[0.04] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/45 hover:bg-white/[0.06] hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_30px_rgba(212,175,55,0.12)]">
-
-                      {/* ================================================= */}
-                      {/* CARD TOP                                            */}
-                      {/* ================================================= */}
-
-                      <div className="flex items-start justify-between gap-3">
-                        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#E7C977] transition-all duration-300 group-hover:border-[#D4AF37]/50 group-hover:bg-[#D4AF37]/15 group-hover:shadow-[0_0_25px_rgba(212,175,55,0.15)]">
-
-                          <AmenityIcon
-                            name={amenity.icon}
-                            size={21}
-                            strokeWidth={1.8}
-                          />
-
-                        </span>
-
-                        <span className="inline-flex rounded-full border border-[#D4AF37]/25 bg-[#D4AF37]/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#E7C977]">
-                          {amenity.category}
-                        </span>
-                      </div>
-
-                      {/* ================================================= */}
-                      {/* NAME                                                */}
-                      {/* ================================================= */}
-
-                      <h3 className="mt-4 font-serif text-lg font-medium text-[#F5F1E8]">
-                        {amenity.name}
-                      </h3>
-
-                      {/* ================================================= */}
-                      {/* DESCRIPTION                                         */}
-                      {/* ================================================= */}
-
-                      <p className="mt-1 flex-1 text-sm leading-relaxed text-[#B8B2A5]">
-                        {amenity.description ||
-                          "No description provided."}
-                      </p>
-
-                      {/* ================================================= */}
-                      {/* ICON KEY                                            */}
-                      {/* ================================================= */}
-
-                      <div className="mt-4 flex items-center gap-2">
-                        <span className="rounded-md border border-white/10 bg-black/20 px-2 py-1 font-mono text-[10px] text-[#77736B]">
-                          {amenity.icon || "grid"}
-                        </span>
-                      </div>
-
-                      {/* ================================================= */}
-                      {/* ACTIONS                                             */}
-                      {/* ================================================= */}
-
-                      <div className="mt-4 flex gap-2 border-t border-white/5 pt-4">
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            openEdit(amenity)
-                          }
-                          className="lux-icon-btn"
-                          aria-label={`Edit ${amenity.name}`}
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[720px] text-sm">
+                    <thead>
+                      <tr className="border-b border-[#D4AF37]/15 bg-white/[0.02]">
+                        <th className="lux-table-th">Amenity</th>
+                        <th className="lux-table-th">Category</th>
+                        <th className="lux-table-th">Image</th>
+                        <th className="lux-table-th text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/[0.04]">
+                      {amenities.map((amenity) => (
+                        <motion.tr
+                          key={amenity._id}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="transition-colors hover:bg-white/[0.03]"
                         >
-                          <Icon
-                            name="pencil"
-                            size={15}
-                          />
-                        </button>
+                          <td className="lux-table-td">
+                            <div className="flex items-center gap-3">
+                              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#E7C977]">
+                                <AmenityIcon
+                                  name={amenity.icon}
+                                  size={18}
+                                  strokeWidth={1.8}
+                                />
+                              </span>
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleDelete(amenity)
-                          }
-                          disabled={
-                            deleteMutation.isPending
-                          }
-                          className={deleteIconCls}
-                          aria-label={`Delete ${amenity.name}`}
-                        >
-                          <Icon
-                            name="trash"
-                            size={15}
-                          />
-                        </button>
+                              <div className="min-w-0">
+                                <p className="max-w-[200px] truncate font-serif font-medium text-[#F5F1E8]">
+                                  {amenity.name}
+                                </p>
+                                <p className="mt-0.5 truncate text-xs text-[#77736B]">
+                                  {amenity.description ||
+                                    "No description provided."}
+                                </p>
+                                <p className="mt-0.5 font-mono text-[10px] text-[#77736B]">
+                                  {amenity.icon || "grid"}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
 
-                      </div>
-                    </div>
-                  </motion.li>
-                ))}
-              </motion.ul>
+                          <td className="lux-table-td">
+                            <span className="inline-flex rounded-full border border-[#D4AF37]/25 bg-[#D4AF37]/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#E7C977]">
+                              {amenity.category}
+                            </span>
+                          </td>
+
+                          <td className="lux-table-td">
+                            <AmenityThumb
+                              image={amenity.image}
+                              name={amenity.name}
+                              onClick={() =>
+                                setPreviewTarget({
+                                  src: amenity.image,
+                                  name: amenity.name,
+                                })
+                              }
+                            />
+                          </td>
+
+                          <td className="lux-table-td">
+                            <div className="flex justify-end gap-2">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  openEdit(amenity)
+                                }
+                                className="lux-icon-btn"
+                                aria-label={`Edit ${amenity.name}`}
+                              >
+                                <Icon
+                                  name="pencil"
+                                  size={15}
+                                />
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleDelete(amenity)
+                                }
+                                disabled={
+                                  deleteMutation.isPending
+                                }
+                                className={deleteIconCls}
+                                aria-label={`Delete ${amenity.name}`}
+                              >
+                                <Icon
+                                  name="trash"
+                                  size={15}
+                                />
+                              </button>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
             )}
 
             {/* =========================================================== */}
@@ -805,6 +982,7 @@ const AdminAmenities = () => {
           setModalOpen(false);
           setEditing(null);
           reset(EMPTY_FORM);
+          clearImage();
         }}
         title={
           editing
@@ -812,6 +990,7 @@ const AdminAmenities = () => {
             : "Add amenity"
         }
         tone="glass"
+        size="lg"
         footer={
           <>
             <Button
@@ -821,6 +1000,7 @@ const AdminAmenities = () => {
                 setModalOpen(false);
                 setEditing(null);
                 reset(EMPTY_FORM);
+                clearImage();
               }}
               disabled={
                 isSubmitting ||
@@ -1014,8 +1194,126 @@ const AdminAmenities = () => {
             })}
           />
 
+        {/* =========================================================== */}
+          {/* IMAGE UPLOAD / PREVIEW                                        */}
+          {/* =========================================================== */}
+
+          <div className="mt-2 rounded-2xl border border-[#D4AF37]/18 bg-white/[0.03] p-4">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <p className="font-serif text-base font-medium text-[#F5F1E8]">
+                Amenity image
+              </p>
+
+              <p className="text-[11px] text-[#77736B]">
+                JPG, PNG, WEBP or AVIF · max 5MB
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              {/* Preview */}
+              <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#D4AF37]/20 bg-black/20">
+                {imagePreview || (editing && editing.image && !removeExistingImage) ? (
+                  <img
+                    src={imagePreview || editing.image}
+                    alt="Amenity preview"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-[#77736B]">
+                    <Icon name="camera" size={24} />
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-1 flex-col gap-2">
+                <label className="inline-flex cursor-pointer items-center justify-center gap-2 self-start rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/10 px-4 py-2.5 text-xs font-semibold text-[#E7C977] transition-colors hover:bg-[#D4AF37]/20">
+                  <Icon name="camera" size={15} />
+                  {editing && editing.image && !removeExistingImage
+                    ? "Replace image"
+                    : "Choose image"}
+                  <input
+                    ref={imageFileInputRef}
+                    type="file"
+                    accept={IMAGE_ACCEPT}
+                    className="hidden"
+                    onChange={onImageSelect}
+                    disabled={saveMutation.isPending}
+                  />
+                </label>
+
+                {selectedImage && (
+                  <p className="truncate text-xs text-[#B8B2A5]">
+                    {selectedImage.name}
+                  </p>
+                )}
+
+                {selectedImage && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (imagePreview) URL.revokeObjectURL(imagePreview);
+                      setSelectedImage(null);
+                      setImagePreview(null);
+                      if (imageFileInputRef.current) imageFileInputRef.current.value = "";
+                    }}
+                    className="self-start text-xs font-medium text-red-400 transition-colors hover:text-red-300"
+                  >
+                    Remove selection
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {editing && editing.image && !removeExistingImage && (
+              <div className="mt-3 border-t border-white/5 pt-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRemoveExistingImage(true);
+                    setSelectedImage(null);
+                    if (imagePreview) URL.revokeObjectURL(imagePreview);
+                    setImagePreview(null);
+                    if (imageFileInputRef.current) imageFileInputRef.current.value = "";
+                  }}
+                  className="text-xs font-medium text-red-400 transition-colors hover:text-red-300"
+                >
+                  Remove current image
+                </button>
+              </div>
+            )}
+
+            {removeExistingImage && (
+              <p className="mt-3 text-xs text-[#E7C977]">
+                The current image will be removed when you save.
+              </p>
+            )}
+
+            {/* Upload progress */}
+            {saveMutation.isPending && uploadProgress !== null && (
+              <div className="mt-3">
+                <div className="mb-1 flex items-center justify-between text-xs text-[#E7C977]">
+                  <span>Uploading image…</span>
+                  <span>{uploadProgress}%</span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#C8A446] to-[#E7C96A] transition-all duration-200"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
         </form>
       </Modal>
+
+      {/* Table image preview */}
+      <ImagePreview
+        src={previewTarget?.src}
+        alt={previewTarget?.name || "Amenity"}
+        onClose={() => setPreviewTarget(null)}
+      />
     </>
   );
 };

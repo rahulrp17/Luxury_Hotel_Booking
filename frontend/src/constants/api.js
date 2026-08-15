@@ -76,6 +76,7 @@ export const API = Object.freeze({
     ADMIN_ALL: "/offers/admin/all",
     CREATE: "/offers",
     UPDATE: "/offers", // + /:id
+    BANNER: "/offers", // + /:id/banner
   },
   NOTIFICATIONS: {
     LIST: "/notifications",
@@ -89,6 +90,7 @@ export const API = Object.freeze({
     CREATE: "/amenities",
     UPDATE: "/amenities", // + /:id
     DELETE: "/amenities", // + /:id
+    IMAGE: "/amenities", // + /:id/image
   },
   ANALYTICS: {
     OVERVIEW: "/analytics/overview",

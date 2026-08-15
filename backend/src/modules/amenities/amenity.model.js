@@ -27,6 +27,10 @@ const amenitySchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    imagePublicId: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,

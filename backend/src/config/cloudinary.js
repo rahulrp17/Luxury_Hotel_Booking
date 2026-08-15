@@ -55,6 +55,26 @@ const reviewStorage = new CloudinaryStorage({
   },
 });
 
+// Amenity Image Storage
+const amenityStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "luxury-hotel/amenities",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    transformation: [{ width: 800, height: 600, crop: "limit", quality: "auto" }],
+  },
+});
+
+// Offer Banner Storage
+const offerStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "luxury-hotel/offers",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    transformation: [{ width: 1200, height: 600, crop: "limit", quality: "auto" }],
+  },
+});
+
 // ─── File Filter ─────────────────────────────────────────────────────────
 const imageFileFilter = (req, file, cb) => {
   const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
@@ -94,6 +114,18 @@ const uploadReviewImages = multer({
   limits: { fileSize: 5 * 1024 * 1024, files: 5 },
 });
 
+const uploadAmenityImages = multer({
+  storage: amenityStorage,
+  fileFilter: imageFileFilter,
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 }, // 5MB, single image
+});
+
+const uploadOfferBanner = multer({
+  storage: offerStorage,
+  fileFilter: imageFileFilter,
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 }, // 5MB, single banner
+});
+
 // ─── Helper: Delete from Cloudinary ──────────────────────────────────────
 const deleteFromCloudinary = async (publicId) => {
   try {
@@ -122,6 +154,8 @@ module.exports = {
   uploadRoomImages,
   uploadAvatar,
   uploadReviewImages,
+  uploadAmenityImages,
+  uploadOfferBanner,
   deleteFromCloudinary,
   deleteMultipleFromCloudinary,
 };

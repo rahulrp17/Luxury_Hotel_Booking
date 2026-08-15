@@ -11,6 +11,8 @@ const {
 } = require("./amenity.validator");
 const { cacheMiddleware, queryCacheKey } = require("../../middlewares/cache");
 const { CACHE_TTL } = require("../../config/constants");
+const { uploadLimiter } = require("../../middlewares/rateLimiter");
+const { uploadAmenityImages } = require("../../config/cloudinary");
 
 // Public routes
 router.get(
@@ -27,5 +29,7 @@ router.use(protect, adminOnly);
 router.post("/", createAmenityValidator, validate, amenityController.createAmenity);
 router.put("/:id", updateAmenityValidator, validate, amenityController.updateAmenity);
 router.delete("/:id", amenityController.deleteAmenity);
+router.post("/:id/image", uploadLimiter, uploadAmenityImages.single("image"), amenityController.uploadAmenityImage);
+router.delete("/:id/image", amenityController.removeAmenityImage);
 
 module.exports = router;

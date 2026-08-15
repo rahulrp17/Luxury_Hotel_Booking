@@ -27,6 +27,7 @@ const MOBILE_SECTIONS = [
       { label: "City Hotels", to: ROUTES.CITY_HOTELS },
       { label: "Private Villas", to: ROUTES.PRIVATE_VILLAS },
       { label: "Rooms", to: ROUTES.ROOMS },
+      { label: "Offers", to: ROUTES.OFFERS },
       { label: "Suites", to: ROUTES.SUITES },
       { label: "Presidential Suites", to: ROUTES.PRESIDENTIAL_SUITES },
       { label: "Family Villas", to: ROUTES.FAMILY_VILLAS },

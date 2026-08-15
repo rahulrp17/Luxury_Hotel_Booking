@@ -3,6 +3,7 @@ const ApiError = require("../../utils/ApiError");
 const { parsePagination, buildPagination } = require("../../utils/pagination");
 const { escapeRegex } = require("../../utils/regex");
 const { deleteCacheByPattern } = require("../../config/redis");
+const { deleteFromCloudinary } = require("../../config/cloudinary");
 const notificationService = require("../notifications/notification.service");
 const logger = require("../../config/logger");
 
@@ -47,10 +48,24 @@ class OfferService {
 
   /**
    * Get all active offers (Public)
+   * Only currently redeemable offers are returned: active, already started,
+   * not yet expired, and not fully redeemed (usageLimit 0 / unset = unlimited).
    */
   async getActiveOffers(query) {
     const { page, limit, skip } = parsePagination(query);
-    const filter = { isActive: true, endDate: { $gte: new Date() } };
+    const now = new Date();
+    const filter = {
+      isActive: true,
+      startDate: { $lte: now },
+      endDate: { $gte: now },
+      $expr: {
+        $or: [
+          { $eq: ["$usageLimit", null] },
+          { $eq: ["$usageLimit", 0] },
+          { $lt: ["$usedCount", "$usageLimit"] },
+        ],
+      },
+    };
 
     const [offers, total] = await Promise.all([
       Offer.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
@@ -132,6 +147,43 @@ class OfferService {
     if (nowActive && !wasActive) {
       this._broadcastOffer(offer);
     }
+    return offer;
+  }
+
+  /**
+   * Upload (or replace) the offer banner. When a banner already exists the old
+   * Cloudinary asset is removed so orphaned files never accumulate.
+   */
+  async uploadBanner(id, file) {
+    const offer = await Offer.findById(id);
+    if (!offer) throw ApiError.notFound("Offer not found.");
+
+    if (offer.banner?.publicId && offer.banner.publicId !== file.filename) {
+      await deleteFromCloudinary(offer.banner.publicId);
+    }
+
+    offer.banner = { url: file.path, publicId: file.filename };
+    await offer.save();
+
+    await this._invalidateCache();
+    return offer;
+  }
+
+  /**
+   * Remove the offer banner and delete its Cloudinary asset.
+   */
+  async removeBanner(id) {
+    const offer = await Offer.findById(id);
+    if (!offer) throw ApiError.notFound("Offer not found.");
+
+    if (offer.banner?.publicId) {
+      await deleteFromCloudinary(offer.banner.publicId);
+    }
+
+    offer.banner = undefined;
+    await offer.save();
+
+    await this._invalidateCache();
     return offer;
   }
 

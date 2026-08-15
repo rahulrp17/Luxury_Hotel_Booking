@@ -45,10 +45,25 @@ const updateOffer = asyncHandler(async (req, res) => {
   return ApiResponse.success(res, "Offer updated successfully.", offer);
 });
 
+const uploadOfferBanner = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    throw ApiError.badRequest("Please upload a banner image.");
+  }
+  const offer = await offerService.uploadBanner(req.params.id, req.file);
+  return ApiResponse.success(res, "Offer banner uploaded.", offer);
+});
+
+const removeOfferBanner = asyncHandler(async (req, res) => {
+  const offer = await offerService.removeBanner(req.params.id);
+  return ApiResponse.success(res, "Offer banner removed.", offer);
+});
+
 module.exports = {
   validateOffer,
   getActiveOffers,
   getAllOffers,
   createOffer,
   updateOffer,
+  uploadOfferBanner,
+  removeOfferBanner,
 };

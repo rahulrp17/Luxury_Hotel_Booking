@@ -7,6 +7,8 @@ const { body } = require("express-validator");
 const validate = require("../../middlewares/validate");
 const { OFFER_TYPES } = require("../../config/constants");
 const { cacheMiddleware, queryCacheKey } = require("../../middlewares/cache");
+const { uploadLimiter } = require("../../middlewares/rateLimiter");
+const { uploadOfferBanner } = require("../../config/cloudinary");
 
 const createOfferValidator = [
   body("code").trim().notEmpty().withMessage("Offer code is required"),
@@ -40,5 +42,7 @@ router.use(protect, adminOnly);
 router.get("/admin/all", offerController.getAllOffers);
 router.post("/", createOfferValidator, validate, offerController.createOffer);
 router.put("/:id", updateOfferValidator, validate, offerController.updateOffer);
+router.post("/:id/banner", uploadLimiter, uploadOfferBanner.single("banner"), offerController.uploadOfferBanner);
+router.delete("/:id/banner", offerController.removeOfferBanner);
 
 module.exports = router;

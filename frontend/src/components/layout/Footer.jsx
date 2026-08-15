@@ -144,7 +144,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2">
                 <Icon name="phone" size={16} className="text-gold-500" />
-                +91 00000 00000
+                +91 9342830199
               </li>
             </ul>
 

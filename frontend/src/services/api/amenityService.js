@@ -17,6 +17,20 @@ export const amenityService = {
 
   adminDelete: (id) =>
     axiosInstance.delete(`${API.AMENITIES.DELETE}/${id}`).then((res) => res.data),
+
+  adminUploadImage: (id, file, onProgress) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    return axiosInstance
+      .post(`${API.AMENITIES.IMAGE}/${id}/image`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: onProgress,
+      })
+      .then((res) => res.data);
+  },
+
+  adminRemoveImage: (id) =>
+    axiosInstance.delete(`${API.AMENITIES.IMAGE}/${id}/image`).then((res) => res.data),
 };
 
 export default amenityService;

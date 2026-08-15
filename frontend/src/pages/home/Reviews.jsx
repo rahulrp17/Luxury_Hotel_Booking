@@ -589,7 +589,7 @@ const Reviews = () => {
 
           {/* Left Arrow */}
 
-          <button className="reviews-prev absolute left-0 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 backdrop-blur-xl transition hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black lg:flex">
+          <button className="reviews-prev text-amber-300 absolute left-0 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-amber-300 bg-white/10 backdrop-blur-xl transition hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black lg:flex">
 
             <ChevronLeft size={22} />
 
@@ -597,7 +597,7 @@ const Reviews = () => {
 
           {/* Right Arrow */}
 
-          <button className="reviews-next absolute right-0 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 backdrop-blur-xl transition hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black lg:flex">
+          <button className="reviews-next text-amber-300 absolute right-0 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-amber-300 bg-white/10 backdrop-blur-xl transition hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black lg:flex">
 
             <ChevronRight size={22} />
 
@@ -650,13 +650,13 @@ const Reviews = () => {
           <div className="mt-8 flex items-center justify-center gap-3 lg:hidden">
 
             <button
-              className="  reviews-prev-mobile  flex  h-12  w-12  items-center  justify-center  rounded-full  border  border-white/10  bg-white/10  backdrop-blur-xl  transition  duration-300  hover:border-[#D4AF37]  hover:bg-[#D4AF37]  hover:text-black"
+              className="  reviews-prev-mobile text-amber-300 absolute  flex  h-12  w-12  items-center  justify-center  rounded-full  border  border-amber-300  bg-white/10  backdrop-blur-xl  transition  duration-300  hover:border-[#D4AF37]  hover:bg-[#D4AF37]  hover:text-black"
             >
               <ChevronLeft size={20} />
             </button>
 
             <button
-              className="  reviews-next-mobile  flex  h-12  w-12  items-center  justify-center  rounded-full  border  border-white/10  bg-white/10  backdrop-blur-xl  transition  duration-300  hover:border-[#D4AF37]  hover:bg-[#D4AF37]  hover:text-black"
+              className="  reviews-next-mobile text-amber-300 absolute  flex  h-12  w-12  items-center  justify-center  rounded-full  border border-amber-300 bg-white/10  backdrop-blur-xl  transition  duration-300  hover:border-[#D4AF37]  hover:bg-[#D4AF37]  hover:text-black"
             >
               <ChevronRight size={20} />
             </button>

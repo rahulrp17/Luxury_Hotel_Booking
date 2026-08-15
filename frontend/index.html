@@ -1,24 +1,215 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- =========================
+         BASIC META
+    ========================== -->
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Luxury Hotel Booking Platform" />
-    <title>Luxury Hotel Booking</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
-    <link rel="dns-prefetch" href="https://images.unsplash.com" />
-    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
-    <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <meta
+      name="description"
+      content="Discover and book luxury hotels, premium rooms, exclusive stays, and unforgettable travel experiences with our luxury hotel booking platform."
+    />
+
+    <meta
+      name="keywords"
+      content="luxury hotels, luxury hotel booking, premium hotels, hotel booking, five star hotels, luxury rooms, hotel reservations, best hotels, premium stays, hotel deals, luxury travel, hotel rooms, vacation stays, luxury accommodation"
+    />
+
+    <meta name="author" content="Luxury Hotel Booking" />
+    <meta name="publisher" content="Luxury Hotel Booking" />
+
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="googlebot" content="index, follow" />
+
+    <!-- =========================
+         THEME / BRAND
+    ========================== -->
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="color-scheme" content="dark light" />
+
+    <meta name="application-name" content="Luxury Hotel Booking" />
+
+    <!-- =========================
+         CANONICAL
+         Change this to your real
+         production frontend URL
+    ========================== -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="canonical"
+      href="https://your-production-domain.com/"
+    />
+
+    <!-- =========================
+         FAVICON
+    ========================== -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/favicon.svg"
+    />
+
+    <link
+      rel="apple-touch-icon"
+      href="/favicon.svg"
+    />
+
+    <!-- =========================
+         TITLE
+    ========================== -->
+    <title>
+      Luxury Hotel Booking | Premium Hotels & Exclusive Stays
+    </title>
+
+    <!-- =========================
+         OPEN GRAPH
+    ========================== -->
+    <meta property="og:type" content="website" />
+
+    <meta
+      property="og:title"
+      content="Luxury Hotel Booking | Premium Hotels & Exclusive Stays"
+    />
+
+    <meta
+      property="og:description"
+      content="Discover luxury hotels, premium rooms, exclusive stays and unforgettable travel experiences."
+    />
+
+    <meta
+      property="og:url"
+      content="https://your-production-domain.com/"
+    />
+
+    <meta
+      property="og:site_name"
+      content="Luxury Hotel Booking"
+    />
+
+    <meta
+      property="og:image"
+      content="https://your-production-domain.com/og-image.jpg"
+    />
+
+    <meta
+      property="og:image:alt"
+      content="Luxury hotel interior and premium accommodation"
+    />
+
+    <!-- =========================
+         TWITTER / X
+    ========================== -->
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta
+      name="twitter:title"
+      content="Luxury Hotel Booking | Premium Hotels & Exclusive Stays"
+    />
+
+    <meta
+      name="twitter:description"
+      content="Book premium hotels and discover unforgettable luxury stays."
+    />
+
+    <meta
+      name="twitter:image"
+      content="https://your-production-domain.com/og-image.jpg"
+    />
+
+    <!-- =========================
+         PERFORMANCE
+    ========================== -->
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+
+    <!-- Unsplash -->
+    <link
+      rel="preconnect"
+      href="https://images.unsplash.com"
+      crossorigin
+    />
+
+    <link
+      rel="dns-prefetch"
+      href="https://images.unsplash.com"
+    />
+
+    <!-- Cloudinary -->
+    <link
+      rel="preconnect"
+      href="https://res.cloudinary.com"
+      crossorigin
+    />
+
+    <link
+      rel="dns-prefetch"
+      href="https://res.cloudinary.com"
+    />
+
+    <!-- =========================
+         PREMIUM TYPOGRAPHY
+    ========================== -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <!-- =========================
+         STRUCTURED DATA
+    ========================== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Luxury Hotel Booking",
+        "url": "https://your-production-domain.com/",
+        "description": "Luxury hotel booking platform for premium hotels, rooms and exclusive stays.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://your-production-domain.com/hotels?search={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Luxury Hotel Booking",
+        "url": "https://your-production-domain.com/",
+        "logo": "https://your-production-domain.com/favicon.svg"
+      }
+    </script>
   </head>
+
   <body>
+    <noscript>
+      <strong>
+        JavaScript is required to use this luxury hotel booking platform.
+        Please enable JavaScript in your browser.
+      </strong>
+    </noscript>
+
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+
+    <script
+      type="module"
+      src="/src/main.jsx"
+    ></script>
   </body>
 </html>

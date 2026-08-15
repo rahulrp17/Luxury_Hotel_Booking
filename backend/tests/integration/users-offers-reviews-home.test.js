@@ -543,6 +543,35 @@ describe("Users, Offers, Reviews, Home, Stats, Notifications — /api/v1", () =>
         .send({ title: "X" });
       expect(res.status).toBe(404);
     });
+
+    test("POST /:id/banner without token → 401; non-image upload → 400", async () => {
+      const offer = await createOffer({ code: offerCode("BAN") });
+
+      const anon = await agent().post(`/api/v1/offers/${offer._id}/banner`);
+      expect(anon.status).toBe(401);
+
+      const admin = await createAdmin();
+      const bad = await agent()
+        .post(`/api/v1/offers/${offer._id}/banner`)
+        .set(authHeaders(admin))
+        .attach("banner", Buffer.from("not-an-image"), "x.txt");
+      // Multer imageFileFilter rejects non-image mimetypes.
+      expect(bad.status).toBe(400);
+      expect(bad.body.message).toMatch(/Only image files/i);
+    });
+
+    test("DELETE /:id/banner without token → 401; unknown id → 404 (ADMIN)", async () => {
+      const offer = await createOffer({ code: offerCode("DELB") });
+
+      const anon = await agent().delete(`/api/v1/offers/${offer._id}/banner`);
+      expect(anon.status).toBe(401);
+
+      const admin = await createAdmin();
+      const missing = await agent()
+        .delete("/api/v1/offers/not-a-real-id/banner")
+        .set(authHeaders(admin));
+      expect([400, 404]).toContain(missing.status);
+    });
   });
 
   // ─── 4. Reviews ────────────────────────────────────────────────────────────

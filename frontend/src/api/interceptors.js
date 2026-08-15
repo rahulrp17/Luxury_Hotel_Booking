@@ -1,15 +1,24 @@
 import axiosInstance from "./axiosInstance";
 import { tokenStore } from "@/utils/storage";
-import { refreshAccessToken } from "./refresh";
+import { refreshAccessToken, isSessionError } from "./refresh";
+
+const AUTH_ENDPOINTS = ["/auth/login", "/auth/register", "/auth/refresh-token"];
+
+const isAuthEndpoint = (url) =>
+  AUTH_ENDPOINTS.some((endpoint) => url.includes(endpoint));
 
 /**
- * Auth request interceptor: attaches the access token to every request.
+ * Auth request interceptor: attaches the access token to every request, except
+ * the auth endpoints themselves (login/register/refresh) which are sent without
+ * a possibly-expired Bearer header.
  */
 axiosInstance.interceptors.request.use(
   (request) => {
-    const token = tokenStore.getAccessToken();
-    if (token) {
-      request.headers.Authorization = `Bearer ${token}`;
+    if (!isAuthEndpoint(request.url || "")) {
+      const token = tokenStore.getAccessToken();
+      if (token) {
+        request.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return request;
   },
@@ -28,8 +37,9 @@ const processQueue = (error, token = null) => {
 };
 
 /**
- * Response interceptor: on 401, attempt a single token refresh then replay the
- * original request. If refresh fails, clears auth and notifies the app.
+ * Response interceptor: on 401, attempt a single refresh then replay the
+ * original request once. If refresh fails with a session rejection (401/403),
+ * clears auth and notifies the app; transient errors keep the session intact.
  */
 axiosInstance.interceptors.response.use(
   (response) => response,
@@ -42,12 +52,7 @@ axiosInstance.interceptors.response.use(
     }
 
     const url = originalRequest.url || "";
-    const isAuthCall =
-      url.includes("/auth/login") ||
-      url.includes("/auth/register") ||
-      url.includes("/auth/refresh-token");
-
-    if (isAuthCall) {
+    if (isAuthEndpoint(url)) {
       tokenStore.clearAll();
       return Promise.reject(error);
     }
@@ -71,7 +76,7 @@ axiosInstance.interceptors.response.use(
       return axiosInstance(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError, null);
-      if (typeof window !== "undefined") {
+      if (isSessionError(refreshError) && typeof window !== "undefined") {
         window.dispatchEvent(new CustomEvent("auth:unauthorized"));
       }
       return Promise.reject(refreshError);

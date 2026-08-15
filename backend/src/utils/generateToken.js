@@ -59,13 +59,38 @@ const verifyEmailToken = (token) => {
 };
 
 /**
- * Cookie options for refresh token
+ * Parse a duration string (e.g. "7d", "30d", "15m", "2h", "90s") into
+ * milliseconds so the refresh cookie lifetime matches the JWT expiry.
+ */
+const parseDurationToMs = (duration) => {
+  const value = parseInt(duration, 10);
+  if (!Number.isFinite(value)) {
+    return 7 * 24 * 60 * 60 * 1000; // 7 days fallback
+  }
+  const unit =
+    String(duration).replace(/^[\d\s]+/i, "").toLowerCase() || "s";
+  const multipliers = {
+    s: 1000,
+    m: 60 * 1000,
+    h: 60 * 60 * 1000,
+    d: 24 * 60 * 60 * 1000,
+  };
+  return value * (multipliers[unit] || 1000);
+};
+
+/**
+ * Cookie options for refresh token.
+ *
+ * Production is hosted on Vercel, where the frontend and API live on separate
+ * *.vercel.app sites, so the cookie must be SameSite=None + Secure for browsers
+ * to send it on the cross-site refresh request; otherwise users are logged out
+ * every time the access token expires (~15 min).
  */
 const getRefreshTokenCookieOptions = () => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  maxAge: parseDurationToMs(process.env.JWT_REFRESH_EXPIRE || "7d"),
   path: "/api/v1/auth",
 });
 
@@ -75,7 +100,7 @@ const getRefreshTokenCookieOptions = () => ({
 const getClearCookieOptions = () => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   path: "/api/v1/auth",
 });
 

@@ -45,12 +45,29 @@ app.use(
 );
 
 // ─── CORS ──────────────────────────────────────────────────────────────────
+// The API is consumed cross-origin by the Vite frontend. FRONTEND_URL may hold
+// several comma-separated origins (main + preview/staging). Vercel deployments
+// are also allowed so preview branches keep working. The origin callback
+// reflects the actual requester instead of "*", which is required for
+// credentialed (refresh-cookie) requests.
+const defaultOrigins = new Set(["http://localhost:5173", "http://localhost:3000"]);
+for (const origin of (process.env.FRONTEND_URL || "").split(",")) {
+  const trimmed = origin.trim();
+  if (trimmed) defaultOrigins.add(trimmed);
+}
+const isAllowedOrigin = (origin, callback) => {
+  if (!origin || defaultOrigins.has(origin)) {
+    return callback(null, true);
+  }
+  const isVercelDomain = /^https:\/\/[a-z0-9]+(-[a-z0-9]+)*\.vercel\.app$/i.test(
+    origin
+  );
+  return callback(null, isVercelDomain);
+};
+
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_URL || "http://localhost:5173",
-      "http://localhost:3000",
-    ],
+    origin: isAllowedOrigin,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],

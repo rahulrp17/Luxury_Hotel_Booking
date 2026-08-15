@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111318"/>
+      <stop offset="1" stop-color="#20252e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.72" cy="0.18" r="0.6">
+      <stop offset="0" stop-color="#c9a25e" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#c9a25e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <rect width="1200" height="800" fill="url(#glow)"/>
+  <g fill="#2a3038">
+    <rect x="0" y="540" width="230" height="260"/>
+    <rect x="240" y="470" width="190" height="330"/>
+    <rect x="440" y="560" width="250" height="240"/>
+    <rect x="700" y="430" width="210" height="370"/>
+    <rect x="920" y="520" width="280" height="280"/>
+  </g>
+  <g fill="#39414b">
+    <rect x="700" y="430" width="210" height="34"/>
+    <rect x="700" y="478" width="210" height="34"/>
+    <rect x="240" y="470" width="190" height="34"/>
+    <rect x="920" y="520" width="280" height="34"/>
+  </g>
+  <circle cx="600" cy="240" r="120" fill="none" stroke="#c9a25e" stroke-opacity="0.5" stroke-width="2"/>
+  <text x="600" y="760" text-anchor="middle" font-family="Georgia, serif" font-size="44" fill="#c9a25e" fill-opacity="0.85">AureliaStay</text>
+</svg>

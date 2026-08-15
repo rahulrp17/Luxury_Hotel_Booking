@@ -1,0 +1,99 @@
+/**
+ * Application-level enums. Mirrors the backend constants so the frontend never
+ * hardcodes string literals in logic.
+ */
+
+export const USER_ROLES = Object.freeze({
+  USER: "USER",
+  ADMIN: "ADMIN",
+  HOTEL_MANAGER: "HOTEL_MANAGER",
+});
+
+export const BOOKING_STATUS = Object.freeze({
+  PENDING: "PENDING",
+  CONFIRMED: "CONFIRMED",
+  CHECKED_IN: "CHECKED_IN",
+  CHECKED_OUT: "CHECKED_OUT",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED",
+  REFUNDED: "REFUNDED",
+});
+
+export const PAYMENT_STATUS = Object.freeze({
+  CREATED: "CREATED",
+  AUTHORIZED: "AUTHORIZED",
+  CAPTURED: "CAPTURED",
+  FAILED: "FAILED",
+  REFUNDED: "REFUNDED",
+});
+
+export const OFFER_TYPES = Object.freeze({
+  PERCENTAGE: "PERCENTAGE",
+  FLAT: "FLAT",
+  FREE_NIGHT: "FREE_NIGHT",
+});
+
+export const HOTEL_CATEGORIES = Object.freeze({
+  BUDGET: "BUDGET",
+  STANDARD: "STANDARD",
+  LUXURY: "LUXURY",
+  ULTRA_LUXURY: "ULTRA_LUXURY",
+  RESORT: "RESORT",
+  HERITAGE: "HERITAGE",
+  BUSINESS: "BUSINESS",
+  BOUTIQUE: "BOUTIQUE",
+});
+
+export const ROOM_TYPES = Object.freeze({
+  SINGLE: "SINGLE",
+  DOUBLE: "DOUBLE",
+  SUITE: "SUITE",
+  VILLA: "VILLA",
+  PENTHOUSE: "PENTHOUSE",
+  FAMILY: "FAMILY",
+});
+
+export const AMENITY_CATEGORIES = Object.freeze({
+  ROOM: "ROOM",
+  HOTEL: "HOTEL",
+  WELLNESS: "WELLNESS",
+  DINING: "DINING",
+  TRANSPORT: "TRANSPORT",
+  SERVICES: "SERVICES",
+  CONNECTIVITY: "CONNECTIVITY",
+  BUSINESS: "BUSINESS",
+  ACCESSIBILITY: "ACCESSIBILITY",
+  FAMILY: "FAMILY",
+  OUTDOOR: "OUTDOOR",
+});
+
+export const NOTIFICATION_TYPES = Object.freeze({
+  BOOKING_CONFIRMED: "BOOKING_CONFIRMED",
+  BOOKING_CANCELLED: "BOOKING_CANCELLED",
+  PAYMENT_SUCCESS: "PAYMENT_SUCCESS",
+  PAYMENT_FAILED: "PAYMENT_FAILED",
+  REMINDER: "REMINDER",
+  OFFER: "OFFER",
+  GENERAL: "GENERAL",
+});
+
+export const CURRENCY = "INR";
+export const TAX_RATE = 0.18;
+
+/** Human-friendly labels for UI. */
+export const BOOKING_STATUS_LABELS = Object.freeze({
+  [BOOKING_STATUS.PENDING]: "Pending",
+  [BOOKING_STATUS.CONFIRMED]: "Confirmed",
+  [BOOKING_STATUS.CHECKED_IN]: "Checked in",
+  [BOOKING_STATUS.CHECKED_OUT]: "Checked out",
+  [BOOKING_STATUS.CANCELLED]: "Cancelled",
+  [BOOKING_STATUS.REFUNDED]: "Refunded",
+});
+
+export const PAYMENT_STATUS_LABELS = Object.freeze({
+  [PAYMENT_STATUS.CREATED]: "Created",
+  [PAYMENT_STATUS.AUTHORIZED]: "Authorized",
+  [PAYMENT_STATUS.CAPTURED]: "Captured",
+  [PAYMENT_STATUS.FAILED]: "Failed",
+  [PAYMENT_STATUS.REFUNDED]: "Refunded",
+});

@@ -1,0 +1,44 @@
+const express = require("express");
+const router = express.Router();
+
+const authRoutes = require("../modules/auth/auth.routes");
+const userRoutes = require("../modules/users/user.routes");
+const amenityRoutes = require("../modules/amenities/amenity.routes");
+const hotelRoutes = require("../modules/hotels/hotel.routes");
+const roomRoutes = require("../modules/rooms/room.routes");
+const bookingRoutes = require("../modules/bookings/booking.routes");
+const paymentRoutes = require("../modules/payments/payment.routes");
+const reviewRoutes = require("../modules/reviews/review.routes");
+const offerRoutes = require("../modules/offers/offer.routes");
+const notificationRoutes = require("../modules/notifications/notification.routes");
+const analyticsRoutes = require("../modules/analytics/analytics.routes");
+const diningRoutes = require("../modules/dining/dining.routes");
+const testimonialRoutes = require("../modules/testimonials/testimonial.routes");
+const galleryRoutes = require("../modules/gallery/gallery.routes");
+const faqRoutes = require("../modules/faq/faq.routes");
+const attractionRoutes = require("../modules/attractions/attraction.routes");
+const heroBannerRoutes = require("../modules/heroBanner/heroBanner.routes");
+const homeSettingsRoutes = require("../modules/homeSettings/homeSettings.routes");
+const statisticsRoutes = require("../modules/statistics/statistics.routes");
+
+router.use("/auth", authRoutes);
+router.use("/users", userRoutes);
+router.use("/amenities", amenityRoutes);
+router.use("/hotels", hotelRoutes);
+router.use("/rooms", roomRoutes);
+router.use("/bookings", bookingRoutes);
+router.use("/payments", paymentRoutes);
+router.use("/reviews", reviewRoutes);
+router.use("/offers", offerRoutes);
+router.use("/notifications", notificationRoutes);
+router.use("/analytics", analyticsRoutes);
+router.use("/dining", diningRoutes);
+router.use("/testimonials", testimonialRoutes);
+router.use("/gallery", galleryRoutes);
+router.use("/faqs", faqRoutes);
+router.use("/attractions", attractionRoutes);
+router.use("/hero-banner", heroBannerRoutes);
+router.use("/home-settings", homeSettingsRoutes);
+router.use("/statistics", statisticsRoutes);
+
+module.exports = router;

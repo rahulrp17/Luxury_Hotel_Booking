@@ -1,0 +1,527 @@
+@import "tailwindcss";
+
+/* ================================================================
+   THEME TOKENS — Tailwind v4 CSS-first configuration
+   ================================================================ */
+
+@theme {
+  /* Brand — deep charcoal */
+  --color-brand-50: #f6f7f8;
+  --color-brand-100: #eceef0;
+  --color-brand-200: #d5d9de;
+  --color-brand-300: #b3bac2;
+  --color-brand-400: #8a94a0;
+  --color-brand-500: #6a7481;
+  --color-brand-600: #535c68;
+  --color-brand-700: #3a3a3a;
+  --color-brand-800: #202020;
+  --color-brand-900: #111111;
+  --color-brand-950: #0b0b0b;
+
+  /* Accent — luxury gold */
+  --color-gold-50: #fbf6e7;
+  --color-gold-100: #f7eccb;
+  --color-gold-200: #efdca0;
+  --color-gold-300: #e7c977;
+  --color-gold-400: #dfbe54;
+  --color-gold-500: #d4af37;
+  --color-gold-600: #b8912c;
+  --color-gold-700: #93701f;
+  --color-gold-800: #6f5218;
+  --color-gold-900: #4f3a12;
+
+  /* Neutral */
+  --color-cream: #faf7f1;
+  --color-ink: #1a1d22;
+
+  /* Fonts */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+}
+
+/* ================================================================
+   BASE
+   ================================================================ */
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream text-ink font-sans;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif;
+  }
+
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
+
+/* ================================================================
+   REUSABLE COMPONENTS
+   ================================================================ */
+
+@layer components {
+  /* ------------------------------------------------------------
+     Container
+     ------------------------------------------------------------ */
+
+  .container-lux {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ------------------------------------------------------------
+     Primary button
+     ------------------------------------------------------------ */
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-gold-500 text-brand-950 font-medium transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gold-400 hover:-translate-y-0.5;
+
+    box-shadow: 0 10px 40px -10px rgba(212, 175, 55, 0.55);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 14px 50px -10px rgba(212, 175, 55, 0.7);
+  }
+
+  /* ------------------------------------------------------------
+     Gold button
+     ------------------------------------------------------------ */
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-gold-500 text-brand-950 font-medium ring-1 ring-gold-300/50 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300 disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gold-400 hover:-translate-y-0.5;
+
+    box-shadow: 0 10px 40px -10px rgba(212, 175, 55, 0.55);
+  }
+
+  .btn-gold:hover {
+    box-shadow: 0 14px 50px -10px rgba(212, 175, 55, 0.7);
+  }
+
+  /* ------------------------------------------------------------
+     Outline button
+     ------------------------------------------------------------ */
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-gold-500/40 text-brand-700 font-medium transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 disabled:cursor-not-allowed disabled:opacity-50 hover:border-gold-500 hover:text-gold-600 hover:-translate-y-0.5;
+  }
+
+  /* ------------------------------------------------------------
+     Light input
+     ------------------------------------------------------------ */
+
+  .input {
+    @apply w-full rounded-lg border border-brand-200 bg-white px-4 py-2.5 text-brand-900 placeholder-brand-400 transition-colors focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-400/40;
+  }
+
+  /* ------------------------------------------------------------
+     Label
+     ------------------------------------------------------------ */
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-brand-700;
+  }
+
+  /* ------------------------------------------------------------
+     Card
+     ------------------------------------------------------------ */
+
+  .card {
+    @apply rounded-2xl border border-brand-100 bg-white shadow-sm;
+  }
+
+  /* ------------------------------------------------------------
+     Badge
+     ------------------------------------------------------------ */
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+}
+
+/* ================================================================
+   CUSTOM SCROLLBAR
+   ================================================================ */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-brand-300;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d4af37;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #8a94a0 transparent;
+}
+
+/* ================================================================
+   ACCESSIBILITY — REDUCED MOTION
+   ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ================================================================
+   LUXURY BLACK / GOLD THEME
+   Aman · Four Seasons · Ritz-Carlton mood
+   ================================================================ */
+
+@layer components {
+  /* ------------------------------------------------------------
+     Full black scrim
+     ------------------------------------------------------------ */
+
+  .lux-scrim {
+    @apply bg-[#0B0B0B];
+  }
+
+  /* ------------------------------------------------------------
+     Glass card
+     ------------------------------------------------------------ */
+
+  .lux-glass {
+    @apply rounded-2xl border border-[#D4AF37]/15 bg-black/40 backdrop-blur-xl;
+
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.45);
+  }
+
+  /* ------------------------------------------------------------
+     Soft glass
+     ------------------------------------------------------------ */
+
+  .lux-glass-soft {
+    @apply rounded-xl border border-[#D4AF37]/12 bg-white/[0.03];
+  }
+
+  /* ------------------------------------------------------------
+     Eyebrow
+     ------------------------------------------------------------ */
+
+  .lux-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.35em] text-[#F1D477];
+  }
+
+  /* ------------------------------------------------------------
+     Luxury title
+     ------------------------------------------------------------ */
+
+  .lux-title {
+    @apply font-serif text-3xl font-medium leading-tight text-[#F8F6F0] sm:text-4xl;
+  }
+
+  /* ------------------------------------------------------------
+     Section heading
+     ------------------------------------------------------------ */
+
+  .lux-h2 {
+    @apply font-serif text-2xl font-medium leading-snug text-[#F8F6F0] sm:text-3xl;
+  }
+
+  /* ------------------------------------------------------------
+     Body
+     ------------------------------------------------------------ */
+
+  .lux-body {
+    @apply text-sm leading-relaxed text-brand-300 sm:text-base;
+  }
+
+  /* ------------------------------------------------------------
+     Muted text
+     ------------------------------------------------------------ */
+
+  .lux-muted {
+    @apply text-[#A8A8A8];
+  }
+
+  /* ------------------------------------------------------------
+     Luxury chip
+     ------------------------------------------------------------ */
+
+  .lux-chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/25 bg-black/30 px-3.5 py-1.5 text-xs font-medium uppercase tracking-wider text-[#E7C977];
+  }
+
+  /* ------------------------------------------------------------
+     Gold divider
+     ------------------------------------------------------------ */
+
+  .lux-hairline {
+    @apply h-px w-full bg-[#D4AF37]/20;
+  }
+
+  /* ------------------------------------------------------------
+     Main luxury gold button
+     ------------------------------------------------------------ */
+
+  .lux-btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-7 py-3 text-sm font-semibold text-[#0B0B0B] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F1D477] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F1D477]/70 disabled:cursor-not-allowed disabled:opacity-50;
+
+    box-shadow: 0 10px 40px -10px rgba(212, 175, 55, 0.6);
+  }
+
+  .lux-btn-gold:hover {
+    box-shadow: 0 14px 50px -10px rgba(212, 175, 55, 0.75);
+  }
+
+  /* ------------------------------------------------------------
+     Ghost button
+     ------------------------------------------------------------ */
+
+  .lux-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-[#F8F6F0]/25 px-7 py-3 text-sm font-semibold text-[#F8F6F0] transition-all duration-300 hover:border-[#D4AF37]/70 hover:text-[#F1D477] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/60;
+  }
+
+  /* ------------------------------------------------------------
+     Dark luxury input
+     ------------------------------------------------------------ */
+
+  .lux-input {
+    @apply w-full rounded-xl border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-[#F8F6F0] placeholder-[#6d6d6d] backdrop-blur-md transition-colors focus:border-[#D4AF37]/60 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/25;
+  }
+
+  /* ------------------------------------------------------------
+     Luxury label
+     ------------------------------------------------------------ */
+
+  .lux-label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#C9AB4B];
+  }
+
+  /* ------------------------------------------------------------
+     Gold radial glow
+     ------------------------------------------------------------ */
+
+  .lux-glow {
+    background: radial-gradient(ellipse 60% 50% at 50% -10%,
+        rgba(212, 175, 55, 0.12),
+        transparent 70%);
+  }
+
+  /* ------------------------------------------------------------
+     Full-bleed black canvas
+     ------------------------------------------------------------ */
+
+  .lux-canvas {
+    @apply -m-4 min-h-[calc(100vh-4rem)] bg-[#050505] px-4 py-8 sm:-m-6 sm:px-6 sm:py-10 lg:-m-8 lg:px-8;
+  }
+
+  /* ------------------------------------------------------------
+     Content width
+     ------------------------------------------------------------ */
+
+  .lux-inner {
+    @apply mx-auto w-full max-w-[1440px];
+  }
+
+  /* ------------------------------------------------------------
+     Management table header
+     ------------------------------------------------------------ */
+
+  .lux-table-th {
+    @apply whitespace-nowrap py-3 pr-4 text-left text-xs font-semibold uppercase tracking-wider text-[#77736B];
+  }
+
+  /* ------------------------------------------------------------
+     Management table cell
+     ------------------------------------------------------------ */
+
+  .lux-table-td {
+    @apply py-3 pr-4 text-sm text-[#F5F1E8];
+  }
+
+  /* ------------------------------------------------------------
+     Management table secondary cell
+     ------------------------------------------------------------ */
+
+  .lux-table-td-sub {
+    @apply py-3 pr-4 text-sm text-[#B8B2A5];
+  }
+
+  /* ------------------------------------------------------------
+     Icon button
+     ------------------------------------------------------------ */
+
+  .lux-icon-btn {
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#D4AF37]/20 bg-white/[0.03] text-[#B8B2A5] transition-colors hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/10 hover:text-[#E7C977] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/60;
+  }
+
+  /* ------------------------------------------------------------
+     Secondary outline button
+     ------------------------------------------------------------ */
+
+  .lux-btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-[#D4AF37]/30 bg-white/[0.02] px-5 py-2.5 text-sm font-medium text-[#E7C977] transition-all duration-300 hover:border-[#D4AF37]/60 hover:bg-[#D4AF37]/10 hover:text-[#F1D477] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/60 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /* ------------------------------------------------------------
+     Solid dark input
+     ------------------------------------------------------------ */
+
+  .lux-input-solid {
+    @apply w-full rounded-xl border border-[#D4AF37]/20 bg-[#0E0E0E] px-4 py-3 text-sm text-[#F5F1E8] placeholder-[#77736B] transition-colors focus:border-[#D4AF37]/60 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/25;
+  }
+
+  /* ------------------------------------------------------------
+     Gold label
+     ------------------------------------------------------------ */
+
+  .lux-label-gold {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#C9AB4B];
+  }
+}
+
+/* ================================================================
+   GOLD SHIMMER
+   ================================================================ */
+
+.shimmer-gold {
+  background: linear-gradient(100deg,
+      #d4af37 20%,
+      #fff3d0 40%,
+      #d4af37 60%);
+
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  animation: goldShimmer 2.4s linear infinite;
+  animation-play-state: paused;
+}
+
+.group:hover .shimmer-gold {
+  animation-play-state: running;
+}
+
+@keyframes goldShimmer {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* ================================================================
+   GOLD GLOW UTILITIES
+   ================================================================ */
+
+.gold-glow {
+  box-shadow:
+    0 0 20px rgba(212, 175, 55, 0.15),
+    0 0 60px rgba(212, 175, 55, 0.08);
+}
+
+.gold-glow-strong {
+  box-shadow:
+    0 0 25px rgba(212, 175, 55, 0.25),
+    0 0 80px rgba(212, 175, 55, 0.12);
+}
+
+/* ================================================================
+   BLACK / GOLD BACKGROUND
+   ================================================================ */
+
+.luxury-bg {
+  background:
+    radial-gradient(circle at 50% 0%,
+      rgba(212, 175, 55, 0.08),
+      transparent 35%),
+    radial-gradient(circle at 100% 100%,
+      rgba(212, 175, 55, 0.04),
+      transparent 35%),
+    #050505;
+}
+
+/* ================================================================
+   GOLD BORDER GLOW
+   ================================================================ */
+
+.gold-border-glow {
+  border: 1px solid rgba(212, 175, 55, 0.25);
+
+  box-shadow:
+    inset 0 0 20px rgba(212, 175, 55, 0.025),
+    0 0 25px rgba(212, 175, 55, 0.05);
+}
+
+/* ================================================================
+   GOLD DIVIDER
+   ================================================================ */
+
+.gold-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(212, 175, 55, 0.5),
+      transparent);
+}
+
+/* ================================================================
+   LUXURY CARD HOVER
+   ================================================================ */
+
+.luxury-card-hover {
+  transition:
+    transform 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+}
+
+.luxury-card-hover:hover {
+  transform: translateY(-4px);
+
+  border-color: rgba(212, 175, 55, 0.35);
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(212, 175, 55, 0.08);
+}
+
+/* ================================================================
+   MOBILE HELPERS
+   ================================================================ */
+
+@media (max-width: 640px) {
+  .lux-title {
+    font-size: 1.875rem;
+  }
+
+  .lux-h2 {
+    font-size: 1.5rem;
+  }
+}

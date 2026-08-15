@@ -1,0 +1,65 @@
+# Render Blueprint — declarative alternative to clicking through the dashboard.
+# See DEPLOYMENT.md for the full environment-variable matrix and step-by-step
+# instructions. Values below are placeholders — set real secrets in the Render
+# dashboard "Environment" tab (never in this file).
+services:
+  - type: web
+    name: luxury-hotel-booking-api
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: JWT_EMAIL_VERIFY_SECRET
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_SECURE
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM_NAME
+        sync: false
+      - key: EMAIL_FROM_ADDRESS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: BRAND_NAME
+        sync: false
+      - key: SMS_API_KEY
+        sync: false
+      - key: SMS_SENDER_ID
+        sync: false
+      - key: TRUST_PROXY_HOPS
+        sync: false

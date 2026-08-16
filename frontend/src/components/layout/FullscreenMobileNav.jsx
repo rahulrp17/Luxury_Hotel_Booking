@@ -2,7 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, ChevronDown, ArrowRight } from "lucide-react";
-import { FaInstagram, FaFacebookF, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
+import {
+  FaInstagram,
+  FaFacebookF,
+  FaLinkedinIn,
+  FaXTwitter,
+} from "react-icons/fa6";
 import { ROUTES } from "@/constants/routes";
 import { EASE, fadeInUp, staggerContainer } from "@/theme/animations";
 import useLockBodyScroll from "@/hooks/useLockBodyScroll";
@@ -115,7 +120,7 @@ const FullscreenMobileNav = ({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[80] flex flex-col bg-brand-950 text-cream"
+          className="fixed inset-0 z-[110] flex flex-col bg-brand-950 text-cream"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -155,11 +160,17 @@ const FullscreenMobileNav = ({
             {MOBILE_SECTIONS.map((section) => {
               const expanded = openSection === section.title;
               return (
-                <motion.div key={section.title} variants={fadeInUp} className="border-b border-white/10 py-1">
+                <motion.div
+                  key={section.title}
+                  variants={fadeInUp}
+                  className="border-b border-white/10 py-1"
+                >
                   <button
                     type="button"
                     aria-expanded={expanded}
-                    onClick={() => setOpenSection(expanded ? null : section.title)}
+                    onClick={() =>
+                      setOpenSection(expanded ? null : section.title)
+                    }
                     className="flex w-full items-center justify-between py-2 font-serif text-4xl font-medium text-cream transition-colors hover:text-gold-300"
                   >
                     {section.title}
@@ -198,7 +209,7 @@ const FullscreenMobileNav = ({
                                 <span className="h-px w-3 bg-gold-500/25" />
                                 {item.label}
                               </span>
-                            )
+                            ),
                           )}
                         </div>
                       </motion.div>
@@ -209,11 +220,18 @@ const FullscreenMobileNav = ({
             })}
 
             {isAuthenticated && (
-              <motion.div variants={fadeInUp} className="border-b border-white/10 py-1">
+              <motion.div
+                variants={fadeInUp}
+                className="border-b border-white/10 py-1"
+              >
                 <button
                   type="button"
                   aria-expanded={openSection === "__account"}
-                  onClick={() => setOpenSection(openSection === "__account" ? null : "__account")}
+                  onClick={() =>
+                    setOpenSection(
+                      openSection === "__account" ? null : "__account",
+                    )
+                  }
                   className="flex w-full items-center justify-between py-2 font-serif text-4xl font-medium text-cream transition-colors hover:text-gold-300"
                 >
                   Account
@@ -266,7 +284,6 @@ const FullscreenMobileNav = ({
                 </AnimatePresence>
               </motion.div>
             )}
-
           </motion.nav>
 
           <div className="border-t border-white/10 p-6">

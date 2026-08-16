@@ -288,6 +288,7 @@ const RoomResult = ({ room }) => {
 ========================================================= */
 
 const OfferResult = ({ offer }) => (
+  <Link to="/offers">
   <div
     className="
       rounded-2xl
@@ -310,9 +311,9 @@ const OfferResult = ({ offer }) => (
           </p>
 
           {offer.code && (
-            <span className="rounded-md border border-[#D4AF37]/20 bg-black/30 px-2 py-0.5 font-mono text-[10px] text-[#D4AF37]">
-              {offer.code}
-            </span>
+            <p className="rounded-md border border-[#D4AF37]/20 bg-black/30 px-2 py-0.5 font-mono text-[10px] text-[#D4AF37]">
+              <span className="text-amber-300">CODE:</span><span className="text-white">{offer.code}</span>
+            </p>
           )}
         </div>
 
@@ -330,7 +331,13 @@ const OfferResult = ({ offer }) => (
       </div>
     </div>
   </div>
+  </Link>
 );
+
+
+
+
+
 
 /* =========================================================
    Typing Indicator
@@ -675,7 +682,7 @@ const AiChat = () => {
           fixed
           bottom-5 right-5
           z-[100]
-          flex h-16 w-16
+          flex h-13 w-13
           items-center justify-center
           rounded-full
           border border-amber-300

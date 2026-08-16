@@ -91,7 +91,7 @@ const Login = () => {
               Welcome back
             </span>
             <h1 className="mt-3 font-serif text-2xl font-medium text-[#F8F6F0] sm:text-[1.65rem]">
-              Sign in to <span className="text-[#E7C977]">AureliaStay</span>
+              Sign in to <span className="text-white">Aurelia</span><span className="shimmer-gold font-serif text-[1.7rem] font-semibold transition-transform duration-500">Stay</span>
             </h1>
             <p className="mt-1 text-[13px] text-[#A8A8A8]">Your private portal to luxury stays.</p>
           </motion.div>

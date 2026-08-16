@@ -129,7 +129,7 @@ const AmenityCard = ({ amenity }) => {
       variants={fadeInUp}
       whileHover={{ y: -12 }}
       transition={{ duration: 0.45, ease: EASE }}
-      className="group relative overflow-hidden rounded-[30px] border border-[#D4AF37]/20 bg-[#0E0E0E] shadow-[0_15px_40px_rgba(0,0,0,.45)] transition-all duration-500 hover:border-[#D4AF37] hover:shadow-[0_0_45px_rgba(212,175,55,.35)]"
+      className="group my-3 relative overflow-hidden rounded-[30px] border border-[#D4AF37]/20 bg-[#0E0E0E] shadow-[0_15px_40px_rgba(0,0,0,.45)] transition-all duration-500 hover:border-[#D4AF37] hover:shadow-[0_0_45px_rgba(212,175,55,.35)]"
     >
       {/* Image */}
 
@@ -302,11 +302,11 @@ const Amenities = () => {
 
             {isMobile && (
               <>
-                <button className="amenity-prev absolute left-3 top-[52%] z-30 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-[#141414] text-[#D4AF37] shadow-[0_0_25px_rgba(212,175,55,.20)] transition hover:bg-[#D4AF37] hover:text-black">
+                <button className="amenity-prev border border-amber-300 absolute left-[-3px] top-[72%] z-30 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-[#141414] text-[#D4AF37] shadow-[0_0_25px_rgba(212,175,55,.20)] transition hover:bg-[#D4AF37] hover:text-black">
                   <ChevronLeft size={20} />
                 </button>
 
-                <button className="amenity-next absolute right-3 top-[52%] z-30 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-[#141414] text-[#D4AF37] shadow-[0_0_25px_rgba(212,175,55,.20)] transition hover:bg-[#D4AF37] hover:text-black">
+                <button className="amenity-next border border-amber-300 absolute right-[-3px] top-[72%] z-30 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-[#141414] text-[#D4AF37] shadow-[0_0_25px_rgba(212,175,55,.20)] transition hover:bg-[#D4AF37] hover:text-black">
                   <ChevronRight size={20} />
                 </button>
               </>
@@ -325,7 +325,7 @@ const Amenities = () => {
                   disableOnInteraction: false,
                 }}
                 speed={900}
-                loop={true}
+                loop={false}
                 slidesPerView={1}
                 spaceBetween={24}
               >

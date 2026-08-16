@@ -24,7 +24,44 @@ import { buildResponsiveSrcSet } from "@/utils/helpers";
 /* -------------------------------------------------------------------------- */
 /*                                 HOTEL CARD                                 */
 /* -------------------------------------------------------------------------- */
+const RatingStars = ({ rating = 0 }) => {
+  const value = Math.max(0, Math.min(5, Number(rating) || 0));
 
+  return (
+    <div
+      className="flex items-center gap-1"
+      aria-label={`Rating ${value} out of 5`}
+    >
+      {[1, 2, 3, 4, 5].map((star) => {
+        const fill = Math.max(0, Math.min(1, value - (star - 1)));
+
+        return (
+          <span key={star} className="relative block h-[15px] w-[15px]">
+            {/* Empty star */}
+            <Star
+              size={15}
+              strokeWidth={1.8}
+              className="absolute inset-0 text-[#5A4A20]"
+            />
+
+            {/* Exact rating fill */}
+            <span
+              className="absolute inset-0 overflow-hidden"
+              style={{ width: `${fill * 100}%` }}
+            >
+              <Star
+                size={15}
+                strokeWidth={1.8}
+                fill="#D4AF37"
+                color="#D4AF37"
+              />
+            </span>
+          </span>
+        );
+      })}
+    </div>
+  );
+};
 const HotelCard = memo(({ hotel, priority = false }) => {
   return (
     <motion.article
@@ -65,7 +102,8 @@ const HotelCard = memo(({ hotel, priority = false }) => {
 
         <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full border border-[#D4AF37]/40 bg-[#141414]/90 px-3 py-1.5 text-sm font-semibold text-[#D4AF37] shadow-lg backdrop-blur-xl">
           <Star size={13} fill="currentColor" />
-          <span>{hotel.rating}</span><span className="text-brand-300">({hotel.totalReviews})</span>
+          <span>{hotel.rating}</span>
+          <span className="text-brand-300">({hotel.totalReviews})</span>
         </span>
       </div>
 
@@ -88,10 +126,8 @@ const HotelCard = memo(({ hotel, priority = false }) => {
 
         {/* Stars */}
 
-        <div className="mt-4 flex gap-1">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <Star key={i} size={15} fill="#D4AF37" color="#D4AF37" />
-          ))}
+        <div className="mt-4">
+          <RatingStars rating={hotel.rating} />
         </div>
 
         {/* Divider */}

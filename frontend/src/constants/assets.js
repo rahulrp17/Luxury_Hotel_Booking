@@ -17,7 +17,7 @@ export const FALLBACK_ASSETS = Object.freeze({
   gallery: "/assets/gallery/gallery-03.jpg",
   dining: "/assets/dining/dining-01.jpg",
   amenity: "/assets/amenities/pool.jpg",
-  testimonial: "/assets/testimonials/guest-01.jpg",
+  testimonial: "/assets/testimonials/avatar-1.svg",
   offer: "/assets/offers/offer-01.jpg",
   default: "/assets/hotels/hotel-01.jpg",
 });

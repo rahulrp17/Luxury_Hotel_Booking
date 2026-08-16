@@ -130,8 +130,8 @@ const Footer = () => {
           {/* Brand + contact + social */}
           <div className="lg:col-span-2">
             <Link to={ROUTES.HOME} className="flex items-baseline gap-1" aria-label="AureliaStay home">
-              <span className="font-serif text-xl font-semibold text-cream">Aurelia</span>
-              <span className="font-serif text-xl font-semibold text-gold-500">Stay</span>
+              <span className="font-serif text-[30px] font-semibold text-cream">Aurelia</span>
+              <span className="shimmer-gold font-serif text-[1.7rem] font-semibold transition-transform duration-500 ">Stay</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm text-brand-400">
               Curated luxury stays with seamless booking, guaranteed rates and white-glove service.

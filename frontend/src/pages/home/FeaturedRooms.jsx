@@ -20,7 +20,6 @@ import {
   BedDouble,
   Star,
   ArrowRight,
-
 } from "lucide-react";
 
 import { ROUTES, buildPath } from "@/constants/routes";
@@ -31,7 +30,44 @@ import { buildResponsiveSrcSet } from "@/utils/helpers";
 /* -------------------------------------------------------------------------- */
 /*                                ROOM CARD                                   */
 /* -------------------------------------------------------------------------- */
+const RatingStars = ({ rating = 0 }) => {
+  const value = Math.max(0, Math.min(5, Number(rating) || 0));
 
+  return (
+    <div
+      className="flex items-center gap-1"
+      aria-label={`Rating ${value} out of 5`}
+    >
+      {[1, 2, 3, 4, 5].map((star) => {
+        const fill = Math.max(0, Math.min(1, value - (star - 1)));
+
+        return (
+          <span key={star} className="relative block h-[15px] w-[15px]">
+            {/* Empty star */}
+            <Star
+              size={15}
+              strokeWidth={1.8}
+              className="absolute inset-0 text-[#5A4A20]"
+            />
+
+            {/* Exact rating fill */}
+            <span
+              className="absolute inset-0 overflow-hidden"
+              style={{ width: `${fill * 100}%` }}
+            >
+              <Star
+                size={15}
+                strokeWidth={1.8}
+                fill="#D4AF37"
+                color="#D4AF37"
+              />
+            </span>
+          </span>
+        );
+      })}
+    </div>
+  );
+};
 const RoomCard = memo(({ room, priority = false }) => {
   return (
     <motion.article
@@ -72,9 +108,7 @@ const RoomCard = memo(({ room, priority = false }) => {
             FROM
           </p>
 
-          <p className="text-base font-bold text-[#D4AF37]">
-            {room.price}
-          </p>
+          <p className="text-base font-bold text-[#D4AF37]">{room.price}</p>
         </div>
       </div>
 
@@ -86,9 +120,7 @@ const RoomCard = memo(({ room, priority = false }) => {
         </h3>
 
         {/* Hotel */}
-        <p className="mt-1 text-sm text-[#A5A5A5]">
-          {room.hotel}
-        </p>
+        <p className="mt-1 text-sm text-[#A5A5A5]">{room.hotel}</p>
 
         {/* Features */}
         <div className="mt-4 flex flex-wrap gap-2">
@@ -105,18 +137,8 @@ const RoomCard = memo(({ room, priority = false }) => {
 
         {/* Rating */}
         <div className="mt-4 flex items-center gap-1">
-          {[1, 2, 3, 4, 5].map((item) => (
-            <Star
-              key={item}
-              size={16}
-              fill="#D4AF37"
-              color="#D4AF37"
-            />
-          ))}
-
-          <span className="ml-2 text-sm font-medium text-[#CFCFCF]">
-            {room.rating}
-          </span>
+          <RatingStars rating={room.rating} />
+          <span className="text-[#CFCFCF] ">({room.rating})</span>
         </div>
 
         {/* Divider */}
@@ -128,7 +150,6 @@ const RoomCard = memo(({ room, priority = false }) => {
           className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#B8860B] via-[#D4AF37] to-[#F2D675] font-semibold text-black transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(212,175,55,.5)]"
         >
           View Room
-
           <ArrowRight size={18} />
         </Link>
       </div>
@@ -152,7 +173,7 @@ const FeaturedRooms = () => {
 
   return (
     <Section className="relative overflow-hidden bg-[#050505] mt-[-5rem]">
-         <div className="absolute left-[-220px] top-[-220px] h-[520px] w-[520px] rounded-full bg-[#D4AF37]/12 blur-[160px]" />
+      <div className="absolute left-[-220px] top-[-220px] h-[520px] w-[520px] rounded-full bg-[#D4AF37]/12 blur-[160px]" />
 
       <div className="absolute right-[-180px] bottom-[-180px] h-[420px] w-[420px] rounded-full bg-[#D4AF37]/10 blur-[160px]" />
 
@@ -167,7 +188,6 @@ const FeaturedRooms = () => {
         </Reveal>
 
         <div className="relative mt-14">
-
           {/* Left Arrow */}
 
           <button className="swiper-room-prev absolute left-[-32px] top-1/2 z-30 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#111111] text-[#D4AF37] shadow-[0_10px_30px_rgba(0,0,0,.45)] transition-all duration-300 hover:bg-[#D4AF37] hover:text-black max-lg:left-[-20px] max-lg:h-12 max-lg:w-12">

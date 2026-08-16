@@ -40,17 +40,21 @@ const ROOM_TYPE_KEYWORDS = {
 };
 
 const AMENITY_ALIASES = {
-  pool: ["pool", "swimming"],
+  pool: ["pool", "swimming pool", "swimming"],
   spa: ["spa"],
-  wifi: ["wifi", "wi-fi", "internet"],
+  wifi: ["wifi", "wi-fi", "internet", "free wifi"],
   breakfast: ["breakfast", "dining", "restaurant", "restaurants"],
-  gym: ["gym", "fitness"],
-  parking: ["parking"],
+  gym: ["gym", "fitness", "fitness center"],
+  parking: ["parking", "free parking"],
   "sea view": ["sea view", "ocean view", "beach view"],
   "air conditioning": ["ac", "air conditioning", "aircon"],
   bar: ["bar"],
   lounge: ["lounge"],
   "room service": ["room service"],
+  "pet friendly": ["pet friendly", "pets allowed", "pet"],
+  "airport shuttle": ["airport shuttle", "airport transfer"],
+  television: ["tv", "television"],
+  "business center": ["business center", "business centre"],
 };
 
 const GREETING_WORDS = ["hi", "hello", "hey", "namaste", "good morning", "good afternoon", "good evening", "yo", "hola"];
@@ -79,6 +83,7 @@ function parseIntent(message) {
     category: extractCategory(text),
     amenities: extractAmenities(text),
     sort: extractSort(text),
+    ...extractStarFilters(text),
   };
 
   // Detect intent from strongest signal to weakest.
@@ -282,12 +287,30 @@ function extractRange(text, filters) {
   return filters;
 }
 
-/** "5 star", "4+ star", "4 star and above", "top rated". */
+/**
+ * Guest-rating (avgRating) threshold, e.g. "top rated", "highly rated".
+ * Star-class phrasing is handled by extractStarFilters instead.
+ */
 function extractMinRating(text) {
-  const m = text.match(/(\d)\s*\+?\s*star(?:s)?\b/i);
-  if (m) return parseInt(m[1], 10);
   if (text.includes("top rated") || text.includes("best rated") || text.includes("highly rated")) return 4;
   return null;
+}
+
+/**
+ * Star-class filters, normalised to the public API semantics:
+ *   "5 star hotels"         → { starRating: 5 }        (exact star class)
+ *   "4+ star" / "5 star and above" → { minStarRating } (threshold)
+ */
+function extractStarFilters(text) {
+  const threshold =
+    text.match(/(\d)\s*[-]?\s*\+?\s*star(?:s)?\s*(?:and above|and up|or more|plus)\b/i) ||
+    text.match(/(\d)\s*[-]?\s*\+\s*star(?:s)?\b/i);
+  if (threshold) return { minStarRating: parseInt(threshold[1], 10) };
+
+  const exact = text.match(/(\d)\s*[-]?\s*star(?:s)?\b/i);
+  if (exact) return { starRating: parseInt(exact[1], 10) };
+
+  return {};
 }
 
 function extractCategory(text) {
@@ -348,6 +371,7 @@ module.exports = {
   extractRange,
   extractAmenities,
   extractCategory,
+  extractStarFilters,
   extractRoomType,
   extractHotelName,
   CATEGORY_KEYWORDS,

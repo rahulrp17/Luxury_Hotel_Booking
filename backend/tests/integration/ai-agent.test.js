@@ -11,6 +11,7 @@ const {
   createHotel: rawHotel,
   createRoom,
   createOffer,
+  createAmenity,
   uniq,
 } = require("../helpers/factories");
 const { getRedisClient } = require("../../src/config/redis");
@@ -144,6 +145,79 @@ describe("AI Concierge (/api/v1/ai/chat)", () => {
     expect(res.status).toBe(200);
     expect(res.body.data.type).toBe("reply");
     expect(res.body.data.message).toMatch(/couldn't find/i);
+  });
+
+  test("finds 5-star hotels with a pool (star class + real amenity)", async () => {
+    const pool = await createAmenity({ name: "Pool", icon: "droplets", category: "HOTEL" });
+
+    await seedHotel({
+      name: "Aurelia Poolside Palace",
+      category: "RESORT",
+      starRating: 5,
+      avgRating: 4.5,
+      address: { street: "1 Calangute", city: "Goa", state: "Goa", country: "India", pincode: "403516" },
+      amenities: [pool._id],
+    });
+    // A 5-star hotel WITHOUT the pool amenity must NOT match.
+    await seedHotel({
+      name: "Aurelia Terrace Mumbai",
+      category: "LUXURY",
+      starRating: 5,
+      avgRating: 4.8,
+      address: { street: "2 Marine Drive", city: "Mumbai", state: "Maharashtra", country: "India", pincode: "400001" },
+    });
+
+    const res = await agent().post("/api/v1/ai/chat").send({ message: "5 star hotels with a pool" });
+    expect(res.status).toBe(200);
+    const data = res.body.data;
+    expect(data.type).toBe("hotels");
+    expect(data.hotels.length).toBeGreaterThan(0);
+    const names = data.hotels.map((h) => h.name);
+    expect(names).toContain("Aurelia Poolside Palace");
+    expect(names).not.toContain("Aurelia Terrace Mumbai");
+  });
+
+  test("returns premium Goa stays even when not tagged LUXURY (category relax)", async () => {
+    await seedHotel({
+      name: "Aurelia Ocean Pearl Goa",
+      category: "RESORT",
+      starRating: 5,
+      avgRating: 4.5,
+      address: { street: "1 Baga", city: "Goa", state: "Goa", country: "India", pincode: "403516" },
+    });
+
+    const res = await agent().post("/api/v1/ai/chat").send({ message: "luxury hotels in goa" });
+    expect(res.status).toBe(200);
+    const data = res.body.data;
+    expect(data.type).toBe("hotels");
+    expect(data.hotels.length).toBeGreaterThan(0);
+    expect(data.hotels[0].name).toMatch(/Goa/);
+  });
+
+  test("keeps an exact category filter when matches exist", async () => {
+    await seedHotel({
+      name: "Aurelia Goa Luxe",
+      category: "LUXURY",
+      starRating: 5,
+      avgRating: 4.8,
+      address: { street: "1 Baga", city: "Goa", state: "Goa", country: "India", pincode: "403516" },
+    });
+    await seedHotel({
+      name: "Aurelia Mumbai Business",
+      category: "BUSINESS",
+      starRating: 4,
+      avgRating: 4.1,
+      address: { street: "1 Marine Drive", city: "Mumbai", state: "Maharashtra", country: "India", pincode: "400001" },
+    });
+
+    const res = await agent().post("/api/v1/ai/chat").send({ message: "luxury hotels in goa" });
+    expect(res.status).toBe(200);
+    const data = res.body.data;
+    expect(data.type).toBe("hotels");
+    expect(data.hotels.length).toBe(1);
+    expect(data.hotels[0].category).toBe("LUXURY");
+    expect(data.hotels[0].name).toMatch(/Goa Luxe/);
+    expect(data.message).not.toMatch(/couldn't find/);
   });
 
   test("recommends featured / top-rated stays", async () => {

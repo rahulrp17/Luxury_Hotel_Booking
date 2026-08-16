@@ -109,9 +109,19 @@ describe("AI intent parser", () => {
       expect(filters.maxPrice).toBe(15000);
     });
 
-    test("extracts min rating", () => {
-      expect(parseIntent("5 star hotels in goa").filters.minRating).toBe(5);
+    test("extracts star class (exact vs threshold)", () => {
+      expect(parseIntent("5 star hotels in goa").filters.starRating).toBe(5);
+      expect(parseIntent("5-star hotels").filters.starRating).toBe(5);
+      expect(parseIntent("4+ star hotels").filters.minStarRating).toBe(4);
+      expect(parseIntent("5 star and above hotels").filters.minStarRating).toBe(5);
+    });
+
+    test("extracts guest rating only for 'top rated' phrasing", () => {
       expect(parseIntent("top rated hotels").filters.minRating).toBe(4);
+      expect(parseIntent("highly rated hotels").filters.minRating).toBe(4);
+      // "5 star" is a star-class filter, not an avgRating threshold.
+      expect(parseIntent("5 star hotels").filters.minRating).toBeNull();
+      expect(parseIntent("5 star hotels").filters.starRating).toBe(5);
     });
 
     test("extracts category", () => {

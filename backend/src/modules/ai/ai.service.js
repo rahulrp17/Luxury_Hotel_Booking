@@ -15,10 +15,11 @@ const roomService = require("../rooms/room.service");
 const offerService = require("../offers/offer.service");
 const pricingService = require("../../services/pricing.service");
 const availabilityService = require("../../services/availability.service");
-const { parseIntent, extractRange } = require("./ai.intent");
+const { parseIntent, extractRange, AMENITY_ALIASES } = require("./ai.intent");
 
 const HOTEL = require("../hotels/hotel.model");
 const ROOM = require("../rooms/room.model");
+const Amenity = require("../amenities/amenity.model");
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const MAX_HOTELS = 5;
@@ -97,9 +98,9 @@ class AiService {
 
   async _searchHotels(parsed) {
     const { filters } = parsed;
-    const query = this._buildHotelQuery(filters, { sort: filters.sort || "recommended" });
-
-    const { hotels } = await hotelService.getHotels(query);
+    const { hotels, query, relaxed } = await this._queryHotels(parsed, {
+      sort: filters.sort || "recommended",
+    });
 
     // Filter to genuinely available rooms when dates were supplied.
     let available = hotels;
@@ -117,7 +118,9 @@ class AiService {
 
     return {
       type: "hotels",
-      message: this._hotelsMessage(available.length, filters),
+      message: relaxed
+        ? this._relaxedMessage(filters, available.length)
+        : this._hotelsMessage(available.length, filters),
       hotels: this._shapeHotels(available.slice(0, MAX_HOTELS)),
       query,
     };
@@ -125,8 +128,7 @@ class AiService {
 
   async _recommend(parsed) {
     const { filters } = parsed;
-    const query = this._buildHotelQuery(filters, { sort: "recommended" });
-    const { hotels } = await hotelService.getHotels(query);
+    const { hotels, query, relaxed } = await this._queryHotels(parsed, { sort: "recommended" });
     const picks = (hotels || []).slice(0, MAX_HOTELS);
 
     if (!picks.length) {
@@ -135,8 +137,9 @@ class AiService {
 
     return {
       type: "hotels",
-      message:
-        "Based on guest ratings and your preferences, these are my top recommendations:",
+      message: relaxed
+        ? this._relaxedMessage(filters, picks.length)
+        : "Based on guest ratings and your preferences, these are my top recommendations:",
       hotels: this._shapeHotels(picks),
       query,
     };
@@ -168,9 +171,8 @@ class AiService {
     }
 
     // No hotel named — surface room options from top matching hotels.
-    const query = this._buildHotelQuery(filters, { sort: "recommended" });
-    const { hotels } = await hotelService.getHotels(query);
-    const top = (hotels || []).slice(0, 2);
+    const { hotels: topHotels, query } = await this._queryHotels(parsed, { sort: "recommended" });
+    const top = (topHotels || []).slice(0, 2);
 
     if (!top.length) {
       return { type: "reply", message: this._noResultsMessage(parsed), query };
@@ -344,10 +346,64 @@ class AiService {
     if (filters.minPrice) query.minPrice = filters.minPrice;
     if (filters.maxPrice) query.maxPrice = filters.maxPrice;
     if (filters.minRating) query.minRating = filters.minRating;
+    if (filters.starRating) query.starRating = filters.starRating;
+    if (filters.minStarRating) query.minStarRating = filters.minStarRating;
     if (filters.category) query.category = filters.category;
     if (filters.guests?.adults) query.guests = filters.guests.adults;
+    if (extra.amenities?.length) query.amenities = extra.amenities.join(",");
     if (extra.sort) query.sort = extra.sort;
     return query;
+  }
+
+  /**
+   * Run a hotel query with the real-data filters applied. When an exact
+   * category match finds nothing (e.g. "luxury" but the catalogue tags the
+   * property RESORT), gracefully relax ONLY the category and surface the
+   * closest stays that still honour the destination / star / price / amenity
+   * filters. Never invents results — everything still comes from the database.
+   */
+  async _queryHotels(parsed, { sort } = {}) {
+    const { filters } = parsed;
+    const amenities = await this._resolveAmenityIds(filters.amenities);
+    const query = this._buildHotelQuery(filters, { sort, amenities });
+
+    const { hotels } = await hotelService.getHotels(query);
+    if (hotels.length || !filters.category) {
+      return { hotels, query, relaxed: false };
+    }
+
+    const relaxedQuery = { ...query };
+    delete relaxedQuery.category;
+    const { hotels: relaxedHotels } = await hotelService.getHotels(relaxedQuery);
+    return { hotels: relaxedHotels, query: relaxedQuery, relaxed: true };
+  }
+
+  /**
+   * Resolve natural-language amenity aliases ("pool", "wifi", "spa"…) to the
+   * real Amenity ObjectIds stored on hotels, by fuzzy name matching against the
+   * Amenity collection. Unknown aliases are dropped (no amenity → no filter).
+   */
+  async _resolveAmenityIds(aliases) {
+    if (!aliases || !aliases.length) return [];
+
+    const all = await Amenity.find().select("_id name").lean();
+    const normalize = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+    const ids = new Set();
+
+    for (const alias of aliases) {
+      const synonyms = (AMENITY_ALIASES[alias] || [alias])
+        .map(normalize)
+        .filter((s) => s.length >= 3);
+      for (const doc of all) {
+        const name = normalize(doc.name);
+        const matched = synonyms.some(
+          (syn) => name.includes(syn) || (syn.includes(name) && name.length >= 3)
+        );
+        if (matched) ids.add(doc._id.toString());
+      }
+    }
+
+    return [...ids];
   }
 
   /**
@@ -475,6 +531,12 @@ class AiService {
     if (filters.maxPrice) ctx.push(`under ${INR_FORMATTER.format(filters.maxPrice)}`);
     const where = ctx.length ? ` for ${ctx.join(", ")}` : "";
     return `I couldn't find any stays${where} right now. Would you like me to broaden the search — a different city, higher budget, or flexible dates?`;
+  }
+
+  _relaxedMessage(filters, count) {
+    const context = filters.destination ? ` in ${filters.destination}` : "";
+    const label = filters.category ? `${filters.category.toLowerCase()} ` : "";
+    return `I couldn't find exact ${label}stays${context}, but these ${count === 1 ? "stay" : "stays"} come closest to what you asked for:`;
   }
 
   // ─── OpenRouter fallback ──────────────────────────────────────────────────

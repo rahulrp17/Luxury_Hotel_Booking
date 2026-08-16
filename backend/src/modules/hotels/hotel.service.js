@@ -47,6 +47,7 @@ class HotelService {
     }
     if (query.category) filter.category = query.category;
     if (query.starRating) filter.starRating = parseInt(query.starRating);
+    if (query.minStarRating) filter.starRating = { $gte: parseInt(query.minStarRating) };
     if (query.minRating) filter.avgRating = { $gte: parseFloat(query.minRating) };
     pipeline.push({ $match: filter });
 

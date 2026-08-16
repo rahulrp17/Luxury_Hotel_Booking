@@ -34,6 +34,7 @@ const hotelsQueryValidator = [
   query("country").optional().isString(),
   query("category").optional().isIn(Object.values(HOTEL_CATEGORIES)).withMessage("Invalid category"),
   query("starRating").optional().isInt({ min: 1, max: 5 }).withMessage("starRating must be 1-5"),
+  query("minStarRating").optional().isInt({ min: 1, max: 5 }).withMessage("minStarRating must be 1-5"),
   query("minRating").optional().isFloat({ min: 0, max: 5 }).withMessage("minRating must be 0-5"),
   query("minPrice").optional().isFloat({ min: 0 }).withMessage("minPrice must be >= 0"),
   query("maxPrice").optional().isFloat({ min: 0 }).withMessage("maxPrice must be >= 0"),

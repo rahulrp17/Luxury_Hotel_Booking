@@ -27,7 +27,7 @@ const WELCOME = {
   role: "assistant",
   text: "Welcome to AureliaStay. I’m here to help you discover exceptional hotels, rooms, offers and luxury experiences.",
   suggestions: [
-    "Luxury hotels in Goa",
+    "Luxury hotels in Mumbai",
     "Hotels under ₹10,000",
     "5 star hotels with a pool",
     "Show me current offers",
@@ -663,8 +663,8 @@ const AiChat = () => {
           hover:scale-105
           focus-visible:ring-2
           focus-visible:ring-[#D4AF37]
-          lg:bottom-4 lg:right-4  
-          md:bottom-3 md:right-3
+          lg:bottom-6 lg:right-5  
+          md:bottom-4 md:right-4
         "
         initial={{
           opacity: 0,

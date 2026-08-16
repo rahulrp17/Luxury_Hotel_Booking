@@ -12,8 +12,9 @@ import { loadEnv } from "vite";
  * Only real, implemented public routes are listed (home + the hotels listing —
  * the sole crawler-relevant public surfaces). Hidden auth/account/admin/booking
  * and param routes are intentionally excluded. The hostname comes from
- * VITE_SITE_URL (or VITE_FRONTEND_URL) so no domain is ever invented; sitemap
- * is omitted when no URL is configured rather than emitting a wrong one.
+ * VITE_SITE_URL (or VITE_FRONTEND_URL) so no domain is ever invented; the
+ * canonical production origin is used as a final fallback so sitemap.xml and
+ * the robots Sitemap line are always emitted for the deployed site.
  */
 function seoFilesPlugin() {
   let resolvedRoot = process.cwd();
@@ -25,7 +26,7 @@ function seoFilesPlugin() {
     apply: "build",
     configResolved(config) {
       const env = loadEnv(config.mode, config.root, "");
-      siteUrl = (env.VITE_SITE_URL || env.VITE_FRONTEND_URL || "").replace(/\/+$/, "");
+      siteUrl = (env.VITE_SITE_URL || env.VITE_FRONTEND_URL || "https://aureliastay.vercel.app").replace(/\/+$/, "");
       resolvedOutDir = config.build.outDir;
       resolvedRoot = config.root;
     },

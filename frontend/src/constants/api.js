@@ -105,4 +105,7 @@ export const API = Object.freeze({
     FEATURED: "/attractions/featured",
     DETAIL: "/attractions", // + /:id
   },
+  AI: {
+    CHAT: "/ai/chat",
+  },
 });

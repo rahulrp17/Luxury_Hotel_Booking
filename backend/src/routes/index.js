@@ -20,6 +20,7 @@ const attractionRoutes = require("../modules/attractions/attraction.routes");
 const heroBannerRoutes = require("../modules/heroBanner/heroBanner.routes");
 const homeSettingsRoutes = require("../modules/homeSettings/homeSettings.routes");
 const statisticsRoutes = require("../modules/statistics/statistics.routes");
+const aiRoutes = require("../modules/ai/ai.routes");
 
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
@@ -40,5 +41,6 @@ router.use("/attractions", attractionRoutes);
 router.use("/hero-banner", heroBannerRoutes);
 router.use("/home-settings", homeSettingsRoutes);
 router.use("/statistics", statisticsRoutes);
+router.use("/ai", aiRoutes);
 
 module.exports = router;

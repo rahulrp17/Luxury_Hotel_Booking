@@ -10,4 +10,5 @@ export { notificationService } from "./api/notificationService";
 export { amenityService } from "./api/amenityService";
 export { analyticsService } from "./api/analyticsService";
 export { attractionService } from "./api/attractionService";
+export { aiService } from "./api/aiService";
 export { default as notify, ToasterConfig } from "./toast";

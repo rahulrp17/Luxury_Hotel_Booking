@@ -76,6 +76,20 @@ const bookingLimiter = rateLimit({
   skip: () => process.env.NODE_ENV === "test",
 });
 
+// ─── AI Concierge Limiter ────────────────────────────────────────────────
+// Public endpoint that triggers database queries and (optionally) an OpenRouter
+// call per message — bound so a single IP can't burn the model budget or hammer
+// the DB. Configurable via env, defaults to 20 messages / minute.
+const aiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: parseInt(process.env.AI_RATE_LIMIT_MAX) || 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: rateLimitHandler,
+  ...storeOpt,
+  skip: () => process.env.NODE_ENV === "test",
+});
+
 // ─── Upload Limiter ──────────────────────────────────────────────────────
 const uploadLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -107,4 +121,5 @@ module.exports = {
   bookingLimiter,
   uploadLimiter,
   webhookLimiter,
+  aiLimiter,
 };

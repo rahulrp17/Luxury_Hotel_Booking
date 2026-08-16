@@ -43,6 +43,11 @@ dashboard **Environment** tab; never put real values in the file.
 `EMAIL_FROM_ADDRESS`, `SMS_API_KEY`, `SMS_SENDER_ID`, `RATE_LIMIT_WINDOW_MS`,
 `RATE_LIMIT_MAX_REQUESTS`, `LOG_LEVEL`, `TRUST_PROXY_HOPS=1`.
 
+**AI Concierge (optional — the agent works without it):**
+`OPENROUTER_API_KEY` (enables natural-language fallback replies), `OPENROUTER_MODEL`
+(defaults to `openrouter/free`), `AI_RATE_LIMIT_MAX` (default 20 chat messages/IP/minute).
+All factual hotel/room/price/availability data always comes from the database.
+
 ---
 
 ## 2. Frontend → Vercel

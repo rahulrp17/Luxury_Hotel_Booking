@@ -5,10 +5,12 @@ import ScrollProgress from "./ScrollProgress";
 import ScrollToTopButton from "./ScrollToTopButton";
 import PageTransition from "./PageTransition";
 import SkipLink from "./SkipLink";
+import { AiChat } from "@/components/ai";
 
 /**
  * Public marketing shell: skip link, gold scroll progress, premium navbar,
- * routed content (with page transition), footer, and back-to-top button.
+ * routed content (with page transition), footer, back-to-top button and the
+ * AI concierge chat widget.
  */
 const PublicLayout = () => (
   <div className="flex min-h-screen flex-col">
@@ -22,6 +24,7 @@ const PublicLayout = () => (
     </main>
     <Footer />
     <ScrollToTopButton />
+    <AiChat />
   </div>
 );
 

@@ -60,7 +60,7 @@ const Faq = () => {
                           onClick={() => toggle(groupIndex, index)}
                           className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left focus-visible:ring-2 focus-visible:ring-[#F1D477]"
                         >
-                          <span className="font-medium text-[#F8F6F0]">{item.q}</span>
+                          <span className="font-medium text-amber-200">{item.q}</span>
                           <span
                             className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/30 text-[#F1D477] transition-transform duration-300 ${open ? "rotate-45" : ""}`}
                             aria-hidden="true"

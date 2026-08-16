@@ -18,6 +18,7 @@ import FloatingContactButtons from "./home/FloatingContactButtons";
 const Experience = lazy(() => import("./home/Experience"));
 const Amenities = lazy(() => import("./home/Amenities"));
 const Dining = lazy(() => import("./home/Dining"));
+// const Offers = lazy(() => import("./home/Offers"));
 const Reviews = lazy(() => import("./home/Reviews"));
 const Newsletter = lazy(() => import("./home/Newsletter"));
 const Cta = lazy(() => import("./home/Cta"));
@@ -38,7 +39,11 @@ const SectionFallback = ({ height = 600 }) => (
  * reviews fetch their own live data through the service layer.
  */
 const Home = () => {
-  const { data: hotels, isLoading, error } = useQuery({
+  const {
+    data: hotels,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["featured-hotels", 8],
     // Cached fetch: hits the same GET /hotels/featured?limit=8 endpoint but
     // dedupes concurrent callers and reuses the in-flight/Redis response.
@@ -87,6 +92,13 @@ const Home = () => {
         </Suspense>
       </LazySection>
       {/* <Offers /> */}
+      {/* <LazySection minHeight={880}>
+        <Suspense fallback={<SectionFallback height={880} />}>
+          <Offers />
+        </Suspense>
+      </LazySection> */}
+
+      {/* Reviews */}
       <LazySection minHeight={880}>
         <Suspense fallback={<SectionFallback height={880} />}>
           <Reviews hotelId={primary?._id} />

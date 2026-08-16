@@ -23,6 +23,7 @@ import Magnetic from "@/components/ui/Magnetic";
 import MegaMenu from "./MegaMenu";
 import SearchModal from "./SearchModal";
 import FullscreenMobileNav from "./FullscreenMobileNav";
+import NotificationLoginModal from "./NotificationLoginModal";
 
 const HOTELS_MEGA = {
   columns: [
@@ -184,6 +185,7 @@ const Navbar = () => {
   const unreadCount = useAppSelector(selectUnreadCount);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [notifLoginOpen, setNotifLoginOpen] = useState(false);
 
   const isAdmin = user?.role === USER_ROLES.ADMIN;
 
@@ -248,7 +250,7 @@ const Navbar = () => {
             <button
               type="button"
               aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : "Notifications"}
-              onClick={() => navigate(ROUTES.NOTIFICATIONS)}
+              onClick={() => (isAuthenticated ? navigate(ROUTES.NOTIFICATIONS) : setNotifLoginOpen(true))}
               className={`relative ${glassIcon}`}
             >
               <Bell size={16} />
@@ -370,6 +372,10 @@ const Navbar = () => {
       </header>
 
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <NotificationLoginModal
+        open={notifLoginOpen}
+        onClose={() => setNotifLoginOpen(false)}
+      />
       <FullscreenMobileNav
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}

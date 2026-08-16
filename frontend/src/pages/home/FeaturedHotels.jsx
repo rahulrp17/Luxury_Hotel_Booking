@@ -74,7 +74,7 @@ const HotelCard = memo(({ hotel, priority = false }) => {
         duration: 0.35,
         ease: EASE,
       }}
-      className="group mx-auto my-10 w-full max-w-[320px] overflow-hidden rounded-2xl border border-[#2C2C2C] bg-[#0F0F0F] shadow-[0_15px_40px_rgba(0,0,0,.45)] transition-all duration-500 hover:border-[#D4AF37] hover:shadow-[0_0_35px_rgba(212,175,55,.45)] md:max-w-[275px] lg:max-w-[275px]"
+      className="group mx-auto  my-10 w-full /*max-w-[320px]*/ overflow-hidden rounded-2xl border border-[#2C2C2C] bg-[#0F0F0F] shadow-[0_15px_40px_rgba(0,0,0,.45)] transition-all duration-500 hover:border-[#D4AF37] hover:shadow-[0_0_35px_rgba(212,175,55,.45)] md:max-w-[275px] lg:max-w-[275px]"
     >
       {/* Image */}
 
@@ -87,7 +87,7 @@ const HotelCard = memo(({ hotel, priority = false }) => {
           loading={priority ? "eager" : "lazy"}
           decoding="async"
           fetchPriority={priority ? "high" : "auto"}
-          className="h-[190px] w-[320px] object-cover transition-transform duration-700 group-hover:scale-110"
+          className="h-[190px] w-full /* w-[320px] */ object-cover transition-transform duration-700 group-hover:scale-110"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />

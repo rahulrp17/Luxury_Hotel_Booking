@@ -14,7 +14,7 @@ import {
   Crown,
   Clock3,
 } from "lucide-react";
-
+import AS2 from "../../assets/AS2.png";
 import { aiService } from "@/services";
 import { toErrorMessage } from "@/api";
 import { ROUTES, buildPath } from "@/constants/routes";
@@ -25,10 +25,9 @@ const CREAM = "#F5F1E8";
 
 const WELCOME = {
   role: "assistant",
-  text:
-    "Welcome to AureliaStay. I’m here to help you discover exceptional hotels, rooms, offers and luxury experiences.",
+  text: "Welcome to AureliaStay. I’m here to help you discover exceptional hotels, rooms, offers and luxury experiences.",
   suggestions: [
-    "Luxury hotels in Goa", 
+    "Luxury hotels in Goa",
     "Hotels under ₹10,000",
     "5 star hotels with a pool",
     "Show me current offers",
@@ -142,10 +141,7 @@ const HotelResult = ({ hotel }) => {
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <BedDouble
-                size={22}
-                className="text-[#D4AF37]/70"
-              />
+              <BedDouble size={22} className="text-[#D4AF37]/70" />
             </div>
           )}
 
@@ -173,9 +169,7 @@ const HotelResult = ({ hotel }) => {
 
             {hotel.city || "Luxury destination"}
 
-            {hotel.starRating
-              ? ` · ${STAR_LABELS[hotel.starRating]} Star`
-              : ""}
+            {hotel.starRating ? ` · ${STAR_LABELS[hotel.starRating]} Star` : ""}
           </p>
 
           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -232,10 +226,7 @@ const RoomResult = ({ room }) => {
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <BedDouble
-                size={22}
-                className="text-[#D4AF37]/70"
-              />
+              <BedDouble size={22} className="text-[#D4AF37]/70" />
             </div>
           )}
         </div>
@@ -289,8 +280,8 @@ const RoomResult = ({ room }) => {
 
 const OfferResult = ({ offer }) => (
   <Link to="/offers">
-  <div
-    className="
+    <div
+      className="
       rounded-2xl
       border border-[#D4AF37]/20
       bg-gradient-to-br
@@ -298,46 +289,40 @@ const OfferResult = ({ offer }) => (
       to-transparent
       p-4
     "
-  >
-    <div className="flex gap-3">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#D4AF37]/25 bg-[#D4AF37]/10">
-        <Tag size={16} className="text-[#D4AF37]" />
-      </div>
+    >
+      <div className="flex gap-3">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#D4AF37]/25 bg-[#D4AF37]/10">
+          <Tag size={16} className="text-[#D4AF37]" />
+        </div>
 
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="font-serif text-sm text-[#F5F1E8]">
-            {offer.title}
-          </p>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-serif text-sm text-[#F5F1E8]">{offer.title}</p>
 
-          {offer.code && (
-            <p className="rounded-md border border-[#D4AF37]/20 bg-black/30 px-2 py-0.5 font-mono text-[10px] text-[#D4AF37]">
-              <span className="text-amber-300">CODE:</span><span className="text-white">{offer.code}</span>
+            {offer.code && (
+              <p className="rounded-md border border-[#D4AF37]/20 bg-black/30 px-2 py-0.5 font-mono text-[10px] text-[#D4AF37]">
+                <span className="text-amber-300">CODE:</span>
+                <span className="text-white">{offer.code}</span>
+              </p>
+            )}
+          </div>
+
+          {offer.description && (
+            <p className="mt-1 text-xs leading-relaxed text-[#999]">
+              {offer.description}
+            </p>
+          )}
+
+          {offer.minBookingAmount && (
+            <p className="mt-2 text-[10px] text-[#777]">
+              Minimum booking: {formatINR(offer.minBookingAmount)}
             </p>
           )}
         </div>
-
-        {offer.description && (
-          <p className="mt-1 text-xs leading-relaxed text-[#999]">
-            {offer.description}
-          </p>
-        )}
-
-        {offer.minBookingAmount && (
-          <p className="mt-2 text-[10px] text-[#777]">
-            Minimum booking: {formatINR(offer.minBookingAmount)}
-          </p>
-        )}
       </div>
     </div>
-  </div>
   </Link>
 );
-
-
-
-
-
 
 /* =========================================================
    Typing Indicator
@@ -396,13 +381,11 @@ const Message = ({ msg, onSuggestion }) => {
         duration: 0.25,
         ease: "easeOut",
       }}
-      className={`flex ${
-        isUser ? "justify-end" : "justify-start"
-      }`}
+      className={`flex ${isUser ? "justify-end" : "justify-start"}`}
     >
       {!isUser && (
-        <div className="mr-2 mt-1">
-          <ConciergeAvatar small />
+        <div className="mr-2 h-20 w-20 mt-1 ">
+          <img src={AS2} className="border border-amber-300 rounded-full" />
         </div>
       )}
 
@@ -467,10 +450,7 @@ const Message = ({ msg, onSuggestion }) => {
           {msg.hotels?.length > 0 && (
             <div className="mt-3 space-y-2">
               {msg.hotels.map((hotel) => (
-                <HotelResult
-                  key={hotel._id}
-                  hotel={hotel}
-                />
+                <HotelResult key={hotel._id} hotel={hotel} />
               ))}
             </div>
           )}
@@ -478,10 +458,7 @@ const Message = ({ msg, onSuggestion }) => {
           {msg.rooms?.length > 0 && (
             <div className="mt-3 space-y-2">
               {msg.rooms.map((room) => (
-                <RoomResult
-                  key={room._id}
-                  room={room}
-                />
+                <RoomResult key={room._id} room={room} />
               ))}
             </div>
           )}
@@ -489,10 +466,7 @@ const Message = ({ msg, onSuggestion }) => {
           {msg.offers?.length > 0 && (
             <div className="mt-3 space-y-2">
               {msg.offers.map((offer) => (
-                <OfferResult
-                  key={offer._id}
-                  offer={offer}
-                />
+                <OfferResult key={offer._id} offer={offer} />
               ))}
             </div>
           )}
@@ -604,10 +578,7 @@ const AiChat = () => {
     };
 
     setInput("");
-    setMessages((previous) => [
-      ...previous,
-      userMessage,
-    ]);
+    setMessages((previous) => [...previous, userMessage]);
 
     setLoading(true);
 
@@ -628,10 +599,7 @@ const AiChat = () => {
         createdAt: new Date(),
       };
 
-      setMessages((previous) => [
-        ...previous,
-        assistantMessage,
-      ]);
+      setMessages((previous) => [...previous, assistantMessage]);
     } catch (error) {
       setMessages((previous) => [
         ...previous,
@@ -674,9 +642,7 @@ const AiChat = () => {
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-label={
-          open
-            ? "Close AureliaStay Concierge"
-            : "Open AureliaStay Concierge"
+          open ? "Close AureliaStay Concierge" : "Open AureliaStay Concierge"
         }
         className="
           fixed
@@ -725,15 +691,9 @@ const AiChat = () => {
           }}
         >
           {open ? (
-            <X
-              size={25}
-              strokeWidth={1.8}
-            />
+            <X size={25} strokeWidth={1.8} />
           ) : (
-            <Sparkles
-              size={25}
-              strokeWidth={1.8}
-            />
+            <Sparkles size={25} strokeWidth={1.8} />
           )}
         </motion.div>
 
@@ -785,7 +745,6 @@ const AiChat = () => {
               role="dialog"
               aria-modal="true"
               aria-label="AureliaStay Concierge"
-
               /*
                 IMPORTANT FIX:
                 bottom-24 keeps the popup above
@@ -862,13 +821,18 @@ const AiChat = () => {
                   "
                 />
 
-                <div className="relative flex items-center gap-3 px-5 py-4">
-                  <ConciergeAvatar />
+                <div className="relative flex items-center gap-3 px-3.5 py-4">
+                  <img
+                    src={AS2}
+                    alt="AureliaStay logo"
+                    className="h-10 w-10 border border-amber-300 rounded-full"
+                  />
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <h2 className="truncate font-serif text-[16px] font-medium text-[#F5F1E8]">
-                        <span>Aurelia</span> <span className="text-amber-300">Stay</span>
+                        <span>Aurelia</span>{" "}
+                        <span className="text-amber-300">Stay</span>
                       </h2>
 
                       <span
@@ -949,9 +913,7 @@ const AiChat = () => {
               >
                 {messages.map((message, index) => (
                   <Message
-                    key={`${
-                      message.createdAt?.getTime?.() || index
-                    }-${index}`}
+                    key={`${message.createdAt?.getTime?.() || index}-${index}`}
                     msg={message}
                     onSuggestion={handleSuggestion}
                   />
@@ -993,9 +955,7 @@ const AiChat = () => {
                       ref={inputRef}
                       rows={1}
                       value={input}
-                      onChange={(event) =>
-                        setInput(event.target.value)
-                      }
+                      onChange={(event) => setInput(event.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder="Ask about your perfect stay..."
                       aria-label="Message AureliaStay Concierge"

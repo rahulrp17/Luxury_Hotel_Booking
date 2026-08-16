@@ -80,7 +80,7 @@ const RoomCard = memo(({ room, priority = false }) => {
         duration: 0.35,
         ease: EASE,
       }}
-      className="group mx-auto my-10 w-full max-w-[320px] overflow-hidden rounded-2xl border border-[#2C2C2C] bg-[#0F0F0F] shadow-[0_15px_40px_rgba(0,0,0,.45)] transition-all duration-500 hover:border-[#D4AF37] hover:shadow-[0_0_35px_rgba(212,175,55,.45)] md:max-w-[275px] lg:max-w-[275px]"
+      className="group mx-auto my-10 w-full /*max-w-[320px]*/ overflow-hidden rounded-2xl border border-[#2C2C2C] bg-[#0F0F0F] shadow-[0_15px_40px_rgba(0,0,0,.45)] transition-all duration-500 hover:border-[#D4AF37] hover:shadow-[0_0_35px_rgba(212,175,55,.45)] /*lg:max-w-[275px] md:max-w-[275px]*/"
     >
       {/* Image */}
       <div className="relative overflow-hidden">
@@ -92,7 +92,7 @@ const RoomCard = memo(({ room, priority = false }) => {
           loading={priority ? "eager" : "lazy"}
           decoding="async"
           fetchPriority={priority ? "high" : "auto"}
-          className="h-[190px] w-[320px] object-cover transition-transform duration-700 group-hover:scale-110"
+          className="h-[190px] w-full /* w-[320px] */ object-cover transition-transform duration-700 group-hover:scale-110"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
@@ -142,7 +142,7 @@ const RoomCard = memo(({ room, priority = false }) => {
         </div>
 
         {/* Divider */}
-        <div className="my-4 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
+        <div className="my-4 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
 
         {/* Button */}
         <Link
@@ -190,13 +190,13 @@ const FeaturedRooms = () => {
         <div className="relative mt-14">
           {/* Left Arrow */}
 
-          <button className="swiper-room-prev absolute left-[-32px] top-1/2 z-30 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#111111] text-[#D4AF37] shadow-[0_10px_30px_rgba(0,0,0,.45)] transition-all duration-300 hover:bg-[#D4AF37] hover:text-black max-lg:left-[-20px] max-lg:h-12 max-lg:w-12">
+          <button className="swiper-room-prev absolute left-[-32px] top-58 z-30 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#111111] text-[#D4AF37] shadow-[0_10px_30px_rgba(0,0,0,.45)] transition-all duration-300 hover:bg-[#D4AF37] hover:text-black max-lg:left-[-20px] max-lg:h-12 max-lg:w-12">
             <ChevronLeft size={20} />
           </button>
 
           {/* Right Arrow */}
 
-          <button className="swiper-room-next absolute right-[-32px] top-1/2 z-30 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#111111] text-[#D4AF37] shadow-[0_10px_30px_rgba(0,0,0,.45)] transition-all duration-300 hover:bg-[#D4AF37] hover:text-black max-lg:right-[-20px] max-lg:h-12 max-lg:w-12">
+          <button className="swiper-room-next absolute right-[-32px] top-58 z-30 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#111111] text-[#D4AF37] shadow-[0_10px_30px_rgba(0,0,0,.45)] transition-all duration-300 hover:bg-[#D4AF37] hover:text-black max-lg:right-[-20px] max-lg:h-12 max-lg:w-12">
             <ChevronRight size={20} />
           </button>
 

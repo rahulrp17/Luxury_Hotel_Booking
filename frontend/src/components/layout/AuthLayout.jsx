@@ -17,10 +17,10 @@ const BackToHome = () => (
     whileHover={{ y: -2 }}
     whileTap={{ scale: 0.97 }}
     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-    className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-black/40 px-4 py-2 text-sm font-medium text-[#E7C977] shadow-[0_8px_30px_-10px_rgba(0,0,0,0.8)] backdrop-blur-xl transition-colors duration-300 hover:border-[#D4AF37]/70 hover:bg-[#D4AF37]/10 hover:text-[#F1D477] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/60"
+    className="inline-flex items-center gap-1.5 rounded-full border border-[#D4AF37]/35 bg-black/40 px-3 py-1.5 text-xs font-medium text-[#E7C977] shadow-[0_8px_30px_-10px_rgba(0,0,0,0.8)] backdrop-blur-xl transition-colors duration-300 hover:border-[#D4AF37]/70 hover:bg-[#D4AF37]/10 hover:text-[#F1D477] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/60"
     aria-label="Back to home"
   >
-    <Icon name="arrowRight" size={15} className="rotate-180" />
+    <Icon name="arrowRight" size={13} className="rotate-180" />
     Back to Home
   </MotionLink>
 );
@@ -83,8 +83,8 @@ const AuthLayout = () => (
     </div>
 
     {/* Form panel */}
-    <div className="relative flex min-h-screen flex-col items-center justify-center px-6 py-12">
-      <div className="mb-8 flex w-full max-w-md items-center justify-between gap-4">
+    <div className="relative flex min-h-screen flex-col items-center justify-center px-4 py-6">
+      <div className="mb-5 flex w-full max-w-sm items-center justify-between gap-4">
         <BackToHome />
         <Link to={ROUTES.HOME} className="lg:hidden" aria-label="AureliaStay home">
           <span className="font-serif text-2xl font-semibold text-[#F8F6F0]">
@@ -93,7 +93,7 @@ const AuthLayout = () => (
         </Link>
       </div>
       <PageTransition>
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-sm">
           <Outlet />
         </div>
       </PageTransition>

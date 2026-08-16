@@ -65,36 +65,36 @@ const VerifyEmail = () => {
       <Seo title="Verify email" description="Verify your email to finish setting up your AureliaStay account." />
 
       <motion.div variants={fadeInUp} initial="hidden" animate="visible">
-        <div className="lux-glass p-8 sm:p-10">
+        <div className="lux-glass p-6 sm:p-7">
           {status === "verifying" ? (
             <SkeletonLoader.Panel />
           ) : status === "success" ? (
-            <div className="rounded-xl border border-[#D4AF37]/20 bg-white/[0.03] p-6 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold-500 text-brand-950 shadow-[0_10px_40px_-10px_rgba(212,175,55,0.6)]">
-                <Icon name="check" size={28} strokeWidth={2.2} />
+            <div className="rounded-xl border border-[#D4AF37]/20 bg-white/[0.03] p-5 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gold-500 text-brand-950 shadow-[0_10px_40px_-10px_rgba(212,175,55,0.6)]">
+                <Icon name="check" size={24} strokeWidth={2.2} />
               </div>
-              <h1 className="mt-4 font-serif text-2xl font-medium text-[#F8F6F0]">Email verified</h1>
+              <h1 className="mt-3 font-serif text-xl font-medium text-[#F8F6F0]">Email verified</h1>
               <p className="mt-1 text-sm text-[#A8A8A8]">
                 Your account is confirmed. You can now sign in and start booking.
               </p>
-              <Link to={ROUTES.LOGIN} className="btn-gold mt-6 py-2 px-5 text-brand-800 inline-flex">
+              <Link to={ROUTES.LOGIN} className="btn-gold mt-5 py-2 px-5 text-brand-800 inline-flex">
                 Sign in
               </Link>
             </div>
           ) : status === "error" ? (
-            <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-center">
-              <Icon name="info" size={32} className="mx-auto text-red-400" />
-              <h1 className="mt-3 font-serif text-2xl font-medium text-[#F8F6F0]">Verification failed</h1>
+            <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-5 text-center">
+              <Icon name="info" size={28} className="mx-auto text-red-400" />
+              <h1 className="mt-3 font-serif text-xl font-medium text-[#F8F6F0]">Verification failed</h1>
               <p className="mt-1 text-sm text-red-300">{error}</p>
-              <Link to={ROUTES.REGISTER} className="btn-gold mt-6 px-3 py-2 text-brand-800 inline-flex">
+              <Link to={ROUTES.REGISTER} className="btn-gold mt-5 px-3 py-2 text-brand-800 inline-flex">
                 Create a new account
               </Link>
             </div>
           ) : (
             // No token — landing page after registering.
-            <div className="rounded-xl border border-[#D4AF37]/20 bg-white/[0.03] p-6 text-center">
-              <Icon name="mail" size={32} className="mx-auto text-[#E7C977]" />
-              <h1 className="mt-3 font-serif text-2xl font-medium text-[#F8F6F0]">Check your inbox</h1>
+            <div className="rounded-xl border border-[#D4AF37]/20 bg-white/[0.03] p-5 text-center">
+              <Icon name="mail" size={28} className="mx-auto text-[#E7C977]" />
+              <h1 className="mt-3 font-serif text-xl font-medium text-[#F8F6F0]">Check your inbox</h1>
               <p className="mt-1 text-sm text-[#A8A8A8]">
                 {emailed
                   ? `We sent a verification link to ${emailed}.`

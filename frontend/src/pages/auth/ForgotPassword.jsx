@@ -46,16 +46,16 @@ const ForgotPassword = () => {
       <Seo title="Reset password" description="Request a link to reset your AureliaStay password." />
 
       <motion.div variants={staggerContainer(0.08)} initial="hidden" animate="visible">
-        <div className="lux-glass p-8 sm:p-10">
+        <div className="lux-glass p-6 sm:p-7">
           <motion.div variants={fadeInUp}>
             <span className="lux-eyebrow flex items-center gap-3">
               <span className="h-px w-10 bg-[#D4AF37]/70" aria-hidden="true" />
               Account recovery
             </span>
-            <h1 className="mt-4 font-serif text-3xl font-medium text-[#F8F6F0] sm:text-4xl">
+            <h1 className="mt-3 font-serif text-2xl font-medium text-[#F8F6F0] sm:text-[1.65rem]">
               Reset your password
             </h1>
-            <p className="mt-2 text-sm text-[#A8A8A8]">
+            <p className="mt-1 text-[13px] text-[#A8A8A8]">
               {sent
                 ? "Check your inbox for the reset link."
                 : "Enter your account email and we'll send you a secure reset link."}
@@ -65,25 +65,25 @@ const ForgotPassword = () => {
           {sent ? (
             <motion.div
               variants={fadeInUp}
-              className="mt-8 rounded-xl border border-[#D4AF37]/20 bg-white/[0.03] p-6 text-center"
+              className="mt-5 rounded-xl border border-[#D4AF37]/20 bg-white/[0.03] p-5 text-center"
             >
-              <Icon name="mail" size={32} className="mx-auto text-[#E7C977]" />
+              <Icon name="mail" size={28} className="mx-auto text-[#E7C977]" />
               <p className="mt-3 text-sm text-[#A8A8A8]">
                 If an account exists for that email, a password reset link is on its way.
                 It expires shortly, so please check your inbox — and spam folder.
               </p>
               <Link
                 to={ROUTES.LOGIN}
-                className="mt-5 inline-flex font-semibold text-[#E7C977] transition-colors hover:text-[#F1D477]"
+                className="mt-4 inline-flex font-semibold text-[#E7C977] transition-colors hover:text-[#F1D477]"
               >
                 Back to sign in
               </Link>
             </motion.div>
           ) : (
-            <form className="mt-8" onSubmit={handleSubmit(onSubmit)} noValidate>
+            <form className="mt-5" onSubmit={handleSubmit(onSubmit)} noValidate>
               {serverError && (
-                <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
-                  <Icon name="info" size={16} className="mt-0.5 shrink-0 text-red-400" />
+                <div className="mb-3 flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-2.5 text-[13px] text-red-300">
+                  <Icon name="info" size={15} className="mt-0.5 shrink-0 text-red-400" />
                   <span>{serverError}</span>
                 </div>
               )}
@@ -95,6 +95,7 @@ const ForgotPassword = () => {
                 type="email"
                 autoComplete="email"
                 placeholder="you@example.com"
+                className="px-3.5 py-2"
                 error={errors.email?.message}
                 {...register("email", {
                   required: "Email is required",
@@ -102,13 +103,13 @@ const ForgotPassword = () => {
                 })}
               />
 
-              <Button type="submit" variant="gold" size="lg" className="w-full" loading={submitting} disabled={submitting}>
+              <Button type="submit" variant="gold" size="md" className="w-full" loading={submitting} disabled={submitting}>
                 Send reset link
               </Button>
             </form>
           )}
 
-          <p className="mt-6 text-center text-sm text-[#A8A8A8]">
+          <p className="mt-4 text-center text-sm text-[#A8A8A8]">
             Remembered it?{" "}
             <Link to={ROUTES.LOGIN} className="font-semibold text-[#E7C977] transition-colors hover:text-[#F1D477]">
               Back to sign in

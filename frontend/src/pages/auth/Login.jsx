@@ -84,28 +84,28 @@ const Login = () => {
       <Seo title="Sign in" description="Sign in to AureliaStay to manage your bookings and enjoy members-only rates." />
 
       <motion.div variants={staggerContainer(0.08)} initial="hidden" animate="visible">
-        <div className="lux-glass p-8 sm:p-10">
+        <div className="lux-glass p-6 sm:p-7">
           <motion.div variants={fadeInUp}>
             <span className="lux-eyebrow flex items-center gap-3">
               <span className="h-px w-10 bg-[#D4AF37]/70" aria-hidden="true" />
               Welcome back
             </span>
-            <h1 className="mt-4 font-serif text-3xl font-medium text-[#F8F6F0] sm:text-4xl">
+            <h1 className="mt-3 font-serif text-2xl font-medium text-[#F8F6F0] sm:text-[1.65rem]">
               Sign in to <span className="text-[#E7C977]">AureliaStay</span>
             </h1>
-            <p className="mt-2 text-sm text-[#A8A8A8]">Your private portal to luxury stays.</p>
+            <p className="mt-1 text-[13px] text-[#A8A8A8]">Your private portal to luxury stays.</p>
           </motion.div>
 
-          <form className="mt-8" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <form className="mt-5" onSubmit={handleSubmit(onSubmit)} noValidate>
             {serverError && (
-              <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
-                <Icon name="info" size={16} className="mt-0.5 shrink-0 text-red-400" />
+              <div className="mb-3 flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-2.5 text-[13px] text-red-300">
+                <Icon name="info" size={15} className="mt-0.5 shrink-0 text-red-400" />
                 <span>{serverError}</span>
               </div>
             )}
 
             {needsVerification && (
-              <div className="mb-4 rounded-xl border border-[#D4AF37]/25 bg-gold-500/[0.06] p-3 text-sm">
+              <div className="mb-3 rounded-xl border border-[#D4AF37]/25 bg-gold-500/[0.06] p-2.5 text-[13px]">
                 {resendState === "done" ? (
                   <p className="text-[#E7C977]">Verification email sent — check your inbox.</p>
                 ) : (
@@ -131,6 +131,7 @@ const Login = () => {
               type="email"
               autoComplete="email"
               placeholder="you@example.com"
+              className="px-3.5 py-2"
               error={errors.email?.message}
               {...register("email", {
                 required: "Email is required",
@@ -144,11 +145,12 @@ const Login = () => {
               id="login-password"
               autoComplete="current-password"
               placeholder="Your password"
+              className="px-3.5 py-2"
               error={errors.password?.message}
               {...register("password", { required: "Password is required" })}
             />
 
-            <div className="mb-5 text-right text-sm">
+            <div className="mb-4 text-right text-[13px]">
               <Link
                 to={ROUTES.FORGOT_PASSWORD}
                 className="font-medium text-[#C9AB4B] transition-colors hover:text-[#E7C977]"
@@ -157,18 +159,18 @@ const Login = () => {
               </Link>
             </div>
 
-            <Button type="submit" variant="gold" size="lg" className="w-full" loading={loading} disabled={loading}>
+            <Button type="submit" variant="gold" size="md" className="w-full" loading={loading} disabled={loading}>
               Sign in
             </Button>
           </form>
 
-          <div className="mt-7 flex items-center gap-3" aria-hidden="true">
+          <div className="mt-4 flex items-center gap-3" aria-hidden="true">
             <span className="h-px flex-1 bg-[#D4AF37]/20" />
             <span className="text-[11px] uppercase tracking-[0.25em] text-[#77736B]">New here?</span>
             <span className="h-px flex-1 bg-[#D4AF37]/20" />
           </div>
 
-          <p className="mt-5 text-center text-sm text-[#A8A8A8]">
+          <p className="mt-3 text-center text-sm text-[#A8A8A8]">
             <Link
               to={ROUTES.REGISTER}
               className="font-semibold text-[#E7C977] transition-colors hover:text-[#F1D477]"

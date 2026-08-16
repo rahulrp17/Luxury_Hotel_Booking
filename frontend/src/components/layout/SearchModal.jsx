@@ -14,7 +14,7 @@ import {
   Star,
   RotateCcw,
 } from "lucide-react";
-import { Modal } from "@/components/ui";
+import { Modal, SkeletonLoader } from "@/components/ui";
 import { ROUTES } from "@/constants/routes";
 import { HOTEL_CATEGORIES } from "@/constants/enums";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -287,10 +287,7 @@ const SearchModal = ({ open, onClose }) => {
               {suggestionsQuery.isLoading ? (
                 <div className="flex flex-wrap gap-2" aria-busy="true">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className="h-9 w-24 animate-pulse rounded-full bg-white/[0.06]"
-                    />
+                    <SkeletonLoader.Chip key={i} className="w-24" />
                   ))}
                 </div>
               ) : suggestionsQuery.isError ? (

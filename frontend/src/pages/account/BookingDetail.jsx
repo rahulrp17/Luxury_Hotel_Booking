@@ -87,8 +87,8 @@ const BookingDetail = () => {
         <div className="lux-inner">
           <div className="mx-auto max-w-4xl space-y-4">
             <Seo title="Booking" description="Booking details." />
-            <SkeletonLoader.Card tone="dark" />
-            <SkeletonLoader.Card tone="dark" />
+            <SkeletonLoader.BookingCard />
+            <SkeletonLoader.Summary />
           </div>
         </div>
       </div>

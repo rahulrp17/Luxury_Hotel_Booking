@@ -147,17 +147,28 @@ const AccountOverview = () => {
 
         {/* Stats */}
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard icon="calendar" label="Total bookings" value={stats.total} sub={stats.upcoming > 0 ? `${stats.upcoming} upcoming` : "No upcoming stays"} />
-          <StatCard icon="star" label="Upcoming stays" value={stats.upcoming} sub={stats.upcoming > 0 ? "Confirmed & checked-in" : "Planning ahead"} />
-          <StatCard icon="check" label="Completed stays" value={stats.completed} sub={stats.completed > 0 ? "Past vacations" : "No completed stays"} />
-          <StatCard icon="bell" label="Unread updates" value={stats.unread} sub={stats.unread > 0 ? "Tap to review" : "All caught up"} to={ROUTES.NOTIFICATIONS} />
+          {loading ? (
+            <>
+              <SkeletonLoader.Stat />
+              <SkeletonLoader.Stat />
+              <SkeletonLoader.Stat />
+              <SkeletonLoader.Stat />
+            </>
+          ) : (
+            <>
+              <StatCard icon="calendar" label="Total bookings" value={stats.total} sub={stats.upcoming > 0 ? `${stats.upcoming} upcoming` : "No upcoming stays"} />
+              <StatCard icon="star" label="Upcoming stays" value={stats.upcoming} sub={stats.upcoming > 0 ? "Confirmed & checked-in" : "Planning ahead"} />
+              <StatCard icon="check" label="Completed stays" value={stats.completed} sub={stats.completed > 0 ? "Past vacations" : "No completed stays"} />
+              <StatCard icon="bell" label="Unread updates" value={stats.unread} sub={stats.unread > 0 ? "Tap to review" : "All caught up"} to={ROUTES.NOTIFICATIONS} />
+            </>
+          )}
         </div>
 
         {/* Upcoming stay + quick actions */}
         <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
           <motion.div variants={fadeInUp} className="overflow-hidden rounded-2xl border border-[#D4AF37]/18 bg-white/[0.04] backdrop-blur-xl">
             {loading ? (
-              <div className="p-6"><SkeletonLoader.Block className="h-40 w-full" /></div>
+              <SkeletonLoader.BookingCard className="h-full" />
             ) : upcomingStay ? (
               <div className="flex flex-col md:flex-row">
                 <div className="relative w-full shrink-0 md:w-60">
@@ -261,7 +272,7 @@ const AccountOverview = () => {
 
           <div className="mt-4">
             {loading ? (
-              <div className="space-y-3"><SkeletonLoader.Block className="h-14 w-full" /><SkeletonLoader.Block className="h-14 w-full" /></div>
+              <SkeletonLoader.List count={2} avatar={false} lines={1} />
             ) : recentBookings.length === 0 ? (
               <div className="rounded-xl border border-dashed border-[#D4AF37]/25 py-10 text-center">
                 <Icon name="calendar" size={28} className="mx-auto text-[#A8A8A8]" />

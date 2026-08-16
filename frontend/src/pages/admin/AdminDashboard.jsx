@@ -237,14 +237,22 @@ const AdminDashboard = () => {
         )}
 
         {/* KPI cards */}
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <KpiCard icon="check" label="Total revenue" value={stats ? formatCurrency(stats.totalRevenue) : "—"} sub={stats ? "Net of refunds" : overview.isError ? "Unavailable" : "Loading…"} />
-          <KpiCard icon="calendar" label="Total bookings" value={summary ? formatNumber(summary.totalBookings) : "—"} sub={summary ? `${summary.pendingBookings} awaiting payment` : bookingSummary.isError ? "Unavailable" : "Loading…"} />
-          <KpiCard icon="user" label="Total users" value={stats ? formatNumber(stats.totalUsers) : "—"} sub={stats ? "Registered guests" : overview.isError ? "Unavailable" : "Loading…"} />
-          <KpiCard icon="mapPin" label="Total hotels" value={stats ? formatNumber(stats.totalHotels) : "—"} sub={stats ? "Active properties" : overview.isError ? "Unavailable" : "Loading…"} />
-          <KpiCard icon="activity" label="Occupancy rate" value={summary ? `${summary.occupancyRate}%` : "—"} sub={summary ? "Next 7 days · real inventory" : bookingSummary.isError ? "Unavailable" : "Loading…"} />
-          <KpiCard icon="clock" label="Pending bookings" value={summary ? formatNumber(summary.pendingBookings) : "—"} sub={summary && summary.pendingBookings > 0 ? "Needs attention" : summary ? "All cleared" : "Loading…"} />
-        </div>
+        {overview.isLoading || bookingSummary.isLoading ? (
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonLoader.Stat key={i} />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <KpiCard icon="check" label="Total revenue" value={stats ? formatCurrency(stats.totalRevenue) : "—"} sub={stats ? "Net of refunds" : overview.isError ? "Unavailable" : "Loading…"} />
+            <KpiCard icon="calendar" label="Total bookings" value={summary ? formatNumber(summary.totalBookings) : "—"} sub={summary ? `${summary.pendingBookings} awaiting payment` : bookingSummary.isError ? "Unavailable" : "Loading…"} />
+            <KpiCard icon="user" label="Total users" value={stats ? formatNumber(stats.totalUsers) : "—"} sub={stats ? "Registered guests" : overview.isError ? "Unavailable" : "Loading…"} />
+            <KpiCard icon="mapPin" label="Total hotels" value={stats ? formatNumber(stats.totalHotels) : "—"} sub={stats ? "Active properties" : overview.isError ? "Unavailable" : "Loading…"} />
+            <KpiCard icon="activity" label="Occupancy rate" value={summary ? `${summary.occupancyRate}%` : "—"} sub={summary ? "Next 7 days · real inventory" : bookingSummary.isError ? "Unavailable" : "Loading…"} />
+            <KpiCard icon="clock" label="Pending bookings" value={summary ? formatNumber(summary.pendingBookings) : "—"} sub={summary && summary.pendingBookings > 0 ? "Needs attention" : summary ? "All cleared" : "Loading…"} />
+          </div>
+        )}
 
         {/* Revenue + Bookings charts */}
         <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-2">
@@ -255,7 +263,7 @@ const AdminDashboard = () => {
             height="h-64"
           >
             {revenue.isLoading ? (
-              <SkeletonLoader.Block className="h-full w-full" />
+              <SkeletonLoader.Chart />
             ) : revenue.isError ? (
               <div className="flex h-full items-center justify-center"><p className="text-sm text-red-300">Revenue could not be loaded.</p></div>
             ) : revenueData.length === 0 ? (
@@ -286,7 +294,7 @@ const AdminDashboard = () => {
             height="h-64"
           >
             {revenue.isLoading ? (
-              <SkeletonLoader.Block className="h-full w-full" />
+              <SkeletonLoader.Chart />
             ) : revenue.isError ? (
               <div className="flex h-full items-center justify-center"><p className="text-sm text-red-300">Bookings could not be loaded.</p></div>
             ) : revenueData.length === 0 ? (
@@ -316,7 +324,7 @@ const AdminDashboard = () => {
             height="h-64"
           >
             {topHotels.isLoading ? (
-              <SkeletonLoader.Block className="h-full w-full" />
+              <SkeletonLoader.Chart />
             ) : hotelRevenueData.length === 0 ? (
               <div className="flex h-full items-center justify-center"><p className="text-sm text-[#A8A8A8]">No revenue data yet.</p></div>
             ) : (
@@ -341,7 +349,7 @@ const AdminDashboard = () => {
               <Link to={ROUTES.ADMIN_BOOKINGS} className="text-xs font-medium text-[#D4AF37] transition-colors hover:text-[#F1D477]">View all</Link>
             </div>
             {recentBookings.isLoading ? (
-              <div className="mt-4 space-y-3"><SkeletonLoader.Block className="h-12 w-full" /><SkeletonLoader.Block className="h-12 w-full" /></div>
+              <div className="mt-4 space-y-3"><SkeletonLoader.List count={2} avatar={false} lines={1} /></div>
             ) : recentBookings.isError ? (
               <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 py-8 text-center">
                 <Icon name="info" size={24} className="mx-auto text-red-400" />
@@ -388,7 +396,7 @@ const AdminDashboard = () => {
               <Link to={ROUTES.ADMIN_USERS} className="text-xs font-medium text-[#D4AF37] transition-colors hover:text-[#F1D477]">View all</Link>
             </div>
             {recentUsers.isLoading ? (
-              <div className="mt-4 space-y-3"><SkeletonLoader.Block className="h-12 w-full" /><SkeletonLoader.Block className="h-12 w-full" /></div>
+              <div className="mt-4 space-y-3"><SkeletonLoader.List count={2} avatar={false} lines={1} /></div>
             ) : recentUsers.isError ? (
               <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 py-8 text-center">
                 <Icon name="info" size={24} className="mx-auto text-red-400" />

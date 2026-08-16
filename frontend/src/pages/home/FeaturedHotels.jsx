@@ -173,12 +173,7 @@ const FeaturedHotels = ({ hotels = [], loading = false, error = null }) => {
           {loading ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="overflow-hidden rounded-[26px] border border-[#2A2A2A] bg-[#111111] p-4"
-                >
-                  <SkeletonLoader.Card />
-                </div>
+                <SkeletonLoader.HotelCard key={i} />
               ))}
             </div>
           ) : hotelList.length === 0 ? (

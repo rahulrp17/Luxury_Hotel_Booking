@@ -407,10 +407,14 @@ const Booking = () => {
           <Container className="py-16">
             <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
               <div className="min-w-0">
-                <SkeletonLoader.Card tone="dark" />
+                <SkeletonLoader.Block className="mb-6 h-8 w-64" />
+                <SkeletonLoader.Form fields={5} columns={2} />
+                <SkeletonLoader.Block className="mt-8 h-3 w-40" />
+                <SkeletonLoader.Block className="mt-4 h-14 w-full rounded-xl" />
+                <SkeletonLoader.Button className="mt-8 w-48" />
               </div>
               <div>
-                <SkeletonLoader.Card tone="dark" />
+                <SkeletonLoader.Summary className="lg:sticky lg:top-24" />
               </div>
             </div>
           </Container>

@@ -335,7 +335,7 @@ const AdminRooms = () => {
 
               {loading ? (
                 <div className="p-5">
-                  <SkeletonLoader.Card tone="dark" />
+                  <SkeletonLoader.Table columns={7} withMedia rows={5} />
                 </div>
               ) : rooms.length === 0 ? (
                 <div className="p-12 text-center">

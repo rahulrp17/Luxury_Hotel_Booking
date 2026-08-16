@@ -326,7 +326,7 @@ const AdminOffers = () => {
 
             <motion.div variants={fadeInUp} className="mt-6 overflow-hidden rounded-2xl border border-[#D4AF37]/18 bg-white/[0.04] backdrop-blur-xl shadow-[0_20px_70px_rgba(0,0,0,0.4)]">
               {loading ? (
-                <div className="p-5"><SkeletonLoader.Card tone="dark" /></div>
+                <div className="p-5"><SkeletonLoader.Table columns={8} withMedia rows={5} minWidth={1020} /></div>
               ) : query.isError ? (
                 <div className="p-12 text-center">
                   <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-red-500/25 bg-red-500/10 text-red-300">

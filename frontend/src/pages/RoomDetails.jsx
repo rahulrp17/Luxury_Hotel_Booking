@@ -528,11 +528,11 @@ const RoomDetailsSkeleton = () => (
       <Container>
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="min-w-0 space-y-10">
-            <SkeletonLoader.Card tone="dark" />
-            <SkeletonLoader.Card tone="dark" />
+            <SkeletonLoader.BookingCard />
+            <SkeletonLoader.BookingCard />
           </div>
           <div>
-            <SkeletonLoader.Card className="lg:sticky lg:top-24" tone="dark" />
+            <SkeletonLoader.Summary className="lg:sticky lg:top-24" />
           </div>
         </div>
       </Container>

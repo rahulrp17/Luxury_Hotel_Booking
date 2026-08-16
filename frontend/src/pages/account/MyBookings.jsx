@@ -88,9 +88,9 @@ const MyBookings = () => {
           <motion.div variants={fadeInUp} className="mt-6">
             {loading ? (
               <div className="space-y-4">
-                <SkeletonLoader.Card tone="dark" />
-                <SkeletonLoader.Card tone="dark" />
-                <SkeletonLoader.Card tone="dark" />
+                <SkeletonLoader.BookingCard />
+                <SkeletonLoader.BookingCard />
+                <SkeletonLoader.BookingCard />
               </div>
             ) : error ? (
               <div className="rounded-xl border border-red-500/25 bg-red-500/10 p-6 text-center text-sm text-red-200">

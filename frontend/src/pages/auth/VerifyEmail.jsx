@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import Seo from "@/components/common/Seo";
-import Spinner from "@/components/common/Spinner";
+import SkeletonLoader from "@/components/ui/SkeletonLoader";
 import Icon from "@/components/ui/Icons";
 import { ROUTES } from "@/constants/routes";
 import { authService } from "@/services";
@@ -67,10 +67,7 @@ const VerifyEmail = () => {
       <motion.div variants={fadeInUp} initial="hidden" animate="visible">
         <div className="lux-glass p-8 sm:p-10">
           {status === "verifying" ? (
-            <div className="flex flex-col items-center py-10 text-center">
-              <Spinner size={28} className="text-[#E7C977]" />
-              <p className="mt-4 text-sm text-[#A8A8A8]">Verifying your email…</p>
-            </div>
+            <SkeletonLoader.Panel />
           ) : status === "success" ? (
             <div className="rounded-xl border border-[#D4AF37]/20 bg-white/[0.03] p-6 text-center">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold-500 text-brand-950 shadow-[0_10px_40px_-10px_rgba(212,175,55,0.6)]">

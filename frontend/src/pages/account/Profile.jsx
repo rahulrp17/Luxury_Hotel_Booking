@@ -126,8 +126,20 @@ const Profile = () => {
         <div className="lux-inner">
           <div className="mx-auto max-w-3xl space-y-4">
             <Seo title="Profile" description="Update your AureliaStay profile details and preferences." />
-            <SkeletonLoader.Card tone="dark" />
-            <SkeletonLoader.Card tone="dark" />
+            <div className="rounded-2xl border border-[#D4AF37]/18 bg-white/[0.04] p-6 backdrop-blur-xl">
+              <div className="flex items-center gap-4">
+                <SkeletonLoader.Circle className="h-16 w-16" />
+                <div className="min-w-0 flex-1">
+                  <SkeletonLoader.Block className="h-5 w-40" />
+                  <SkeletonLoader.Block className="mt-2 h-3 w-56" />
+                </div>
+                <SkeletonLoader.Button className="hidden w-28 sm:block" />
+              </div>
+              <SkeletonLoader.Form fields={4} columns={2} className="mt-6" />
+            </div>
+            <div className="rounded-2xl border border-[#D4AF37]/18 bg-white/[0.04] p-6 backdrop-blur-xl">
+              <SkeletonLoader.Form fields={3} columns={2} />
+            </div>
           </div>
         </div>
       </div>

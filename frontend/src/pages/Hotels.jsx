@@ -242,7 +242,7 @@ const Hotels = () => {
                   {loading ? (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={view === "grid" ? "grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3" : "flex flex-col gap-5"}>
                       {Array.from({ length: 6 }).map((_, i) => (
-                        <SkeletonLoader.Card key={i} tone="dark" />
+                        <SkeletonLoader.HotelCard key={i} view={view} />
                       ))}
                     </motion.div>
                   ) : error ? (

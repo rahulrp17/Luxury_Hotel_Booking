@@ -335,11 +335,7 @@ const ReviewsSection = memo(function ReviewsSection({
 
       <div className="mt-6">
         {loading ? (
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <SkeletonLoader.Card key={i} tone="dark" />
-            ))}
-          </div>
+          <SkeletonLoader.List count={3} avatar={false} lines={3} />
         ) : error ? (
           <EmptyState
             tone="dark"
@@ -485,7 +481,13 @@ const NearbyPlacesSection = memo(function NearbyPlacesSection({ places, loading,
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <SkeletonLoader.Card key={i} tone="dark" />
+              <div key={i} className="lux-glass overflow-hidden">
+                <SkeletonLoader.Block className="aspect-[4/3] w-full rounded-none" />
+                <div className="p-4">
+                  <SkeletonLoader.Block className="h-4 w-3/4" />
+                  <SkeletonLoader.Block className="mt-2 h-3 w-1/2" />
+                </div>
+              </div>
             ))}
           </div>
         ) : (
@@ -690,12 +692,12 @@ const HotelDetailsSkeleton = () => (
       <Container>
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div className="min-w-0 space-y-10">
-            <SkeletonLoader.Card tone="dark" />
-            <SkeletonLoader.Card tone="dark" />
-            <SkeletonLoader.Card tone="dark" />
+            <SkeletonLoader.BookingCard />
+            <SkeletonLoader.BookingCard />
+            <SkeletonLoader.Summary />
           </div>
           <div>
-            <SkeletonLoader.Card className="lg:sticky lg:top-24" tone="dark" />
+            <SkeletonLoader.Summary className="lg:sticky lg:top-24" />
           </div>
         </div>
       </Container>

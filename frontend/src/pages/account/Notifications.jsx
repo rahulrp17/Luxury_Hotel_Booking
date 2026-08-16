@@ -154,9 +154,7 @@ const Notifications = () => {
           <motion.div variants={fadeInUp} className="mt-6">
             {loading ? (
               <div className="space-y-3">
-                <SkeletonLoader.Card tone="dark" />
-                <SkeletonLoader.Card tone="dark" />
-                <SkeletonLoader.Card tone="dark" />
+                <SkeletonLoader.List count={3} avatar={false} lines={3} />
               </div>
             ) : notifications.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-[#D4AF37]/25 bg-white/[0.02] py-16 text-center">

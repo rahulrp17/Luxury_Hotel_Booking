@@ -26,7 +26,7 @@ const Cta = lazy(() => import("./home/Cta"));
 /** Placeholder shown while a lazy chunk is still downloading. */
 const SectionFallback = ({ height = 600 }) => (
   <div
-    className="w-full animate-pulse rounded-3xl bg-white/5"
+    className="lux-skeleton w-full animate-pulse rounded-3xl bg-white/[0.06]"
     style={{ minHeight: height }}
     aria-hidden="true"
   />

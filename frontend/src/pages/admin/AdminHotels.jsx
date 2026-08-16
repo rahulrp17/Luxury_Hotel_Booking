@@ -373,7 +373,7 @@ const AdminHotels = () => {
               </div>
 
               {loading ? (
-                <div className="p-5"><SkeletonLoader.Card tone="dark" /></div>
+                <div className="p-5"><SkeletonLoader.Table columns={6} withMedia rows={5} /></div>
               ) : hotels.length === 0 ? (
                 <div className="p-12 text-center">
                   <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[#D4AF37]/25 bg-[#D4AF37]/10 text-[#E7C977]">

@@ -105,13 +105,13 @@ const dummyAmenities = [
 
 const AmenitySkeleton = () => {
   return (
-    <div className="overflow-hidden rounded-[28px] bg-white/5 animate-pulse">
+    <div className="overflow-hidden rounded-[28px] border border-[#D4AF37]/15 bg-[#0E0E0E]">
 
-      <div className="h-[260px] w-full bg-white/10" />
+      <div className="lux-skeleton animate-pulse h-[260px] w-full bg-white/[0.06]" />
 
       <div className="p-5">
 
-        <div className="h-6 w-3/4 rounded bg-white/10" />
+        <div className="lux-skeleton animate-pulse h-6 w-3/4 rounded-lg bg-white/[0.06]" />
 
       </div>
 

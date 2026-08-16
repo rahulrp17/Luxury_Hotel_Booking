@@ -1,4 +1,5 @@
 const Amenity = require("./amenity.model");
+const Hotel = require("../hotels/hotel.model");
 const ApiError = require("../../utils/ApiError");
 const { parsePagination, buildPagination } = require("../../utils/pagination");
 const { escapeRegex } = require("../../utils/regex");
@@ -48,7 +49,9 @@ class AmenityService {
   }
 
   async deleteAmenity(id) {
-    const amenity = await Amenity.findById(id);
+    // Atomic delete: a repeated/concurrent request can no longer double-succeed
+    // (previously `findById` + `findByIdAndDelete` had a check-then-act gap).
+    const amenity = await Amenity.findByIdAndDelete(id);
     if (!amenity) throw ApiError.notFound("Amenity not found.");
 
     // Best-effort cleanup of the Cloudinary asset when the amenity has one.
@@ -61,7 +64,10 @@ class AmenityService {
       }
     }
 
-    await Amenity.findByIdAndDelete(id);
+    // Remove the dangling reference from every hotel that had this amenity so
+    // hotel documents never keep ObjectIds pointing at a deleted amenity.
+    await Hotel.updateMany({ amenities: amenity._id }, { $pull: { amenities: amenity._id } });
+
     await this._invalidateCache();
     return true;
   }
@@ -108,9 +114,12 @@ class AmenityService {
   async _invalidateCache() {
     // Clear both the list cache (`amenities:list:*`) and the per-record detail
     // cache (`amenity:<id>`) so edits/uploads/removals never serve stale data.
+    // Hotel lists also embed populated amenity docs, so a rename or removal
+    // must refresh `hotels:*` or public listings show a deleted/old amenity.
     await Promise.all([
       deleteCacheByPattern("amenities:*"),
       deleteCacheByPattern("amenity:*"),
+      deleteCacheByPattern("hotels:*"),
     ]);
   }
 }

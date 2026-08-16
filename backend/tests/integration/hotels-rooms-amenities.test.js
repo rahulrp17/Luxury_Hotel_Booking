@@ -13,6 +13,8 @@ const {
   closeDB,
   agent,
 } = require("../helpers/app");
+const Hotel = require("../../src/modules/hotels/hotel.model");
+const Room = require("../../src/modules/rooms/room.model");
 const {
   createAdmin,
   createUser,
@@ -320,6 +322,30 @@ describe("HOTELS — admin CRUD & authorization", () => {
     expect(del.status).toBe(200);
     expect(del.body.data).toBeUndefined();
   });
+
+  test("DELETE /api/v1/hotels/:id cascades to deactivate its active rooms", async () => {
+    const hotel = await seedHotels({ name: "Cascade Hotel" });
+    const roomA = await seedRoom(hotel, { name: "Cascade Suite A" });
+    const roomB = await seedRoom(hotel, { name: "Cascade Suite B" });
+
+    const del = await agent().delete(`/api/v1/hotels/${hotel._id}`).set(adminToken);
+    expect(del.status).toBe(200);
+
+    // Room detail now 404s because the cascade soft-deleted the rooms.
+    for (const room of [roomA, roomB]) {
+      const res = await agent().get(`/api/v1/rooms/${room._id}`);
+      expect(res.status).toBe(404);
+    }
+
+    // The room docs still exist (soft delete) but are inactive, so public
+    // room listings under this hotel return nothing.
+    const listing = await agent().get(`/api/v1/rooms/hotel/${hotel._id}`);
+    expect(listing.status).toBe(200);
+    expect(listing.body.data).toHaveLength(0);
+
+    const roomDocs = await Room.find({ hotel: hotel._id, isActive: true });
+    expect(roomDocs).toHaveLength(0);
+  });
 });
 
 describe("HOTELS — image endpoints (authorization + file filter)", () => {
@@ -586,9 +612,26 @@ describe("AMENITIES — admin CRUD", () => {
     expect(put.status).toBe(200);
     expect(put.body.data.name).toBe("New Amenity");
 
-    const del = await agent().delete(`/api/v1/amenities/${amenity._id}`).set(adminToken);
+const del = await agent().delete(`/api/v1/amenities/${amenity._id}`).set(adminToken);
     expect(del.status).toBe(200);
     expect(del.body.data).toBeUndefined();
+  });
+
+  test("DELETE /api/v1/amenities/:id removes the reference from hotels that used it", async () => {
+    const amenity = await seedAmenities({ name: "Referenced Amenity" });
+    const hotel = await seedHotels({ name: "Referencing Hotel" });
+    await Hotel.findByIdAndUpdate(hotel._id, { $push: { amenities: amenity._id } });
+
+    const del = await agent().delete(`/api/v1/amenities/${amenity._id}`).set(adminToken);
+    expect(del.status).toBe(200);
+
+    // The hotel doc no longer holds a dangling ObjectId pointing at the deleted amenity.
+    const fresh = await Hotel.findById(hotel._id);
+    expect(fresh.amenities.map((a) => a.toString())).not.toContain(String(amenity._id));
+
+    // Repeating the delete is idempotent-safe: 404, no double success.
+    const again = await agent().delete(`/api/v1/amenities/${amenity._id}`).set(adminToken);
+    expect(again.status).toBe(404);
   });
 
   test("USER token → 403 on amenity admin routes", async () => {

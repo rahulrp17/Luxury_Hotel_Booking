@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Hotel = require("./hotel.model");
+const Room = require("../rooms/room.model");
 const ApiError = require("../../utils/ApiError");
 const { parsePagination, buildPagination } = require("../../utils/pagination");
 const { escapeRegex } = require("../../utils/regex");
@@ -455,7 +456,12 @@ class HotelService {
   }
 
   /**
-   * Soft delete hotel
+   * Soft delete hotel.
+   *
+   * Cascades the deactivation to the hotel's active rooms so an inactive hotel
+   * never leaves active rooms behind (or stale room-count / price data on the
+   * public listings), then clears every hotel, room and detail cache key so
+   * neither the admin panel nor the public site serve the pre-delete state.
    */
   async deleteHotel(id) {
     const hotel = await Hotel.findByIdAndUpdate(id, { isActive: false }, { new: true });
@@ -463,8 +469,17 @@ class HotelService {
       throw ApiError.notFound("Hotel not found.");
     }
 
-    await deleteCacheByPattern("hotel:*");
-    await deleteCacheByPattern("hotels:*");
+    // Cascade: soft-delete any active rooms belonging to this hotel.
+    await Room.updateMany({ hotel: hotel._id, isActive: true }, { isActive: false });
+
+    await Promise.all([
+      deleteCacheByPattern("hotel:*"),
+      deleteCacheByPattern("hotels:*"),
+      deleteCacheByPattern("rooms:list*"),
+      deleteCacheByPattern("rooms:featured*"),
+      deleteCacheByPattern("rooms:hotel:*"),
+      deleteCacheByPattern("room:*"),
+    ]);
     return hotel;
   }
 

@@ -24,6 +24,7 @@ const Button = ({
   size = "md",
   className = "",
   loading = false,
+  loadingLabel = "Loading…",
   children,
   disabled,
   ...props
@@ -36,7 +37,7 @@ const Button = ({
     {loading ? (
       <>
         <Spinner size={16} />
-        <span>Loading…</span>
+        <span>{loadingLabel}</span>
       </>
     ) : (
       children

@@ -7,10 +7,12 @@ import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
 import Icon from "@/components/ui/Icons";
 import Modal from "@/components/ui/Modal";
+import ConfirmDeleteModal from "@/components/ui/ConfirmDeleteModal";
 import Pagination from "@/components/ui/Pagination";
 import SkeletonLoader from "@/components/ui/SkeletonLoader";
 import { roomService, hotelService } from "@/services";
 import { notify } from "@/services";
+import useOptimisticDelete from "@/hooks/useOptimisticDelete";
 import { formatCurrency } from "@/utils/formatters";
 import { ROOM_TYPES } from "@/constants/enums";
 import { fadeInUp, staggerContainer } from "@/theme/animations";
@@ -54,6 +56,7 @@ const AdminRooms = () => {
   const [hotelFilter, setHotelFilter] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
 
@@ -165,13 +168,17 @@ const AdminRooms = () => {
     onError: (err) => notify.errorFrom(err, "We couldn't save this room."),
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id) => roomService.adminDelete(id),
-    onSuccess: () => {
-      notify.success("Room removed.");
-      invalidate();
-    },
-    onError: (err) => notify.errorFrom(err, "We couldn't remove this room."),
+  const deleteMutation = useOptimisticDelete({
+    deleteFn: (id) => roomService.adminDelete(id),
+    keys: [
+      // Admin list shows only active rooms, so a soft-deleted room disappears.
+      { key: ["admin", "rooms"], mode: "remove" },
+      { key: ["rooms"], mode: "remove" },
+      { key: ["room"], mode: "remove" },
+      { key: ["featured-rooms"], mode: "remove" },
+    ],
+    successMessage: "Room removed.",
+    errorMessage: "We couldn't remove this room.",
   });
 
   const toggleFeatured = useMutation({
@@ -395,7 +402,7 @@ const AdminRooms = () => {
                                 <Icon name="pencil" size={15} />
                               </button>
 
-                              <button type="button" onClick={() => deleteMutation.mutate(room._id)} className="lux-icon-btn" aria-label={`Remove ${room.name}`}>
+                              <button type="button" onClick={() => setDeleteTarget(room)} disabled={deleteMutation.isPending} className="lux-icon-btn disabled:cursor-not-allowed disabled:opacity-50" aria-label={`Remove ${room.name}`}>
                                 <Icon name="trash" size={15} />
                               </button>
                             </div>
@@ -581,6 +588,24 @@ const AdminRooms = () => {
           )}
         </motion.div>
       </Modal>
+
+      <ConfirmDeleteModal
+        open={!!deleteTarget}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (!deleteTarget) return;
+          deleteMutation.mutate(deleteTarget._id, {
+            onSuccess: () => setDeleteTarget(null),
+          });
+        }}
+        loading={deleteMutation.isPending}
+        title="Remove this room?"
+        description={
+          deleteTarget
+            ? `"${deleteTarget.name}" will be removed from your room inventory and hidden from the site immediately.`
+            : undefined
+        }
+      />
     </>
   );
 };

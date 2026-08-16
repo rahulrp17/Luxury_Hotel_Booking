@@ -47,10 +47,12 @@ import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
 import Icon from "@/components/ui/Icons";
 import Modal from "@/components/ui/Modal";
+import ConfirmDeleteModal from "@/components/ui/ConfirmDeleteModal";
 import Pagination from "@/components/ui/Pagination";
 import SkeletonLoader from "@/components/ui/SkeletonLoader";
 
 import { amenityService, notify } from "@/services";
+import useOptimisticDelete from "@/hooks/useOptimisticDelete";
 import { AMENITY_CATEGORIES } from "@/constants/enums";
 import { fadeInUp, staggerContainer } from "@/theme/animations";
 import { FALLBACK_ASSETS } from "@/constants/assets";
@@ -448,6 +450,7 @@ const AdminAmenities = () => {
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [removeExistingImage, setRemoveExistingImage] = useState(false);
@@ -605,18 +608,14 @@ const AdminAmenities = () => {
   /* Delete                                                                  */
   /* ======================================================================= */
 
-  const deleteMutation = useMutation({
-    mutationFn: (id) => amenityService.adminDelete(id),
-
-    onSuccess: () => {
-      notify.success("Amenity deleted successfully.");
-
-      invalidate();
-    },
-
-    onError: (err) => {
-      notify.errorFrom(err, "We couldn't delete this amenity.");
-    },
+  const deleteMutation = useOptimisticDelete({
+    deleteFn: (id) => amenityService.adminDelete(id),
+    keys: [
+      { key: ["admin", "amenities"], mode: "remove" },
+      { key: ["amenities"], mode: "remove" },
+    ],
+    successMessage: "Amenity deleted successfully.",
+    errorMessage: "We couldn't delete this amenity.",
   });
 
   /* ======================================================================= */
@@ -689,13 +688,7 @@ const AdminAmenities = () => {
   /* ======================================================================= */
 
   const handleDelete = (amenity) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${amenity.name}"?`
-    );
-
-    if (!confirmed) return;
-
-    deleteMutation.mutate(amenity._id);
+    setDeleteTarget(amenity);
   };
 
   /* ======================================================================= */
@@ -1313,6 +1306,25 @@ const AdminAmenities = () => {
         src={previewTarget?.src}
         alt={previewTarget?.name || "Amenity"}
         onClose={() => setPreviewTarget(null)}
+      />
+
+      {/* Delete confirmation */}
+      <ConfirmDeleteModal
+        open={!!deleteTarget}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (!deleteTarget) return;
+          deleteMutation.mutate(deleteTarget._id, {
+            onSuccess: () => setDeleteTarget(null),
+          });
+        }}
+        loading={deleteMutation.isPending}
+        title="Delete this amenity?"
+        description={
+          deleteTarget
+            ? `"${deleteTarget.name}" will be permanently removed from the collection and from every hotel that lists it.`
+            : undefined
+        }
       />
     </>
   );

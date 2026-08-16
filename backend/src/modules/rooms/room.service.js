@@ -418,6 +418,10 @@ class RoomService {
       deleteCacheByPattern("rooms:list*"),
       deleteCacheByPattern("rooms:featured*"),
       deleteCacheByPattern("rooms:hotel:*"),
+      deleteCacheByPattern("room:*"),
+      // Hotel lists aggregate active-room counts + prices, so every room
+      // mutation must refresh them or `totalActiveRooms`/`startingPrice` go stale.
+      deleteCacheByPattern("hotels:*"),
       hotelId ? deleteCacheByPattern(`hotel:${hotelId}*`) : Promise.resolve(),
     ]);
   }

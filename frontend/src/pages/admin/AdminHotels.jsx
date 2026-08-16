@@ -7,10 +7,12 @@ import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
 import Icon from "@/components/ui/Icons";
 import Modal from "@/components/ui/Modal";
+import ConfirmDeleteModal from "@/components/ui/ConfirmDeleteModal";
 import Pagination from "@/components/ui/Pagination";
 import SkeletonLoader from "@/components/ui/SkeletonLoader";
 import { hotelService, amenityService } from "@/services";
 import { notify } from "@/services";
+import useOptimisticDelete from "@/hooks/useOptimisticDelete";
 import { HOTEL_CATEGORIES } from "@/constants/enums";
 import { fadeInUp, staggerContainer } from "@/theme/animations";
 
@@ -52,6 +54,7 @@ const AdminHotels = () => {
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
@@ -133,13 +136,18 @@ const AdminHotels = () => {
     onError: (err) => notify.errorFrom(err, "We couldn't save this hotel."),
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id) => hotelService.adminDelete(id),
-    onSuccess: () => {
-      notify.success("Hotel removed.");
-      invalidate();
-    },
-    onError: (err) => notify.errorFrom(err, "We couldn't remove this hotel."),
+  const deleteMutation = useOptimisticDelete({
+    deleteFn: (id) => hotelService.adminDelete(id),
+    keys: [
+      // Admin list keeps the row but flips it to inactive (soft delete contract).
+      { key: ["admin", "hotels"], mode: "deactivate" },
+      // Public lists/detail drop the hotel entirely.
+      { key: ["hotels"], mode: "remove" },
+      { key: ["hotel"], mode: "remove" },
+      { key: ["featured-hotels"], mode: "remove" },
+    ],
+    successMessage: "Hotel removed.",
+    errorMessage: "We couldn't remove this hotel.",
   });
 
   const toggleFeatured = useMutation({
@@ -434,7 +442,7 @@ const AdminHotels = () => {
                                 <Icon name="pencil" size={15} />
                               </button>
 
-                              <button type="button" onClick={() => deleteMutation.mutate(hotel._id)} className="lux-icon-btn" aria-label={`Remove ${hotel.name}`}>
+                              <button type="button" onClick={() => setDeleteTarget(hotel)} disabled={deleteMutation.isPending} className="lux-icon-btn disabled:cursor-not-allowed disabled:opacity-50" aria-label={`Remove ${hotel.name}`}>
                                 <Icon name="trash" size={15} />
                               </button>
                             </div>
@@ -548,6 +556,24 @@ const AdminHotels = () => {
           </motion.div>
         </AnimatePresence>
       </Modal>
+
+      <ConfirmDeleteModal
+        open={!!deleteTarget}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (!deleteTarget) return;
+          deleteMutation.mutate(deleteTarget._id, {
+            onSuccess: () => setDeleteTarget(null),
+          });
+        }}
+        loading={deleteMutation.isPending}
+        title="Remove this hotel?"
+        description={
+          deleteTarget
+            ? `"${deleteTarget.name}" and its rooms will be deactivated and hidden from the site. You can re-activate it later from this list.`
+            : undefined
+        }
+      />
     </>
   );
 };

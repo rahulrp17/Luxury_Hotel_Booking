@@ -65,7 +65,7 @@ const HotelCard = memo(({ hotel, priority = false }) => {
 
         <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full border border-[#D4AF37]/40 bg-[#141414]/90 px-3 py-1.5 text-sm font-semibold text-[#D4AF37] shadow-lg backdrop-blur-xl">
           <Star size={13} fill="currentColor" />
-          {hotel.rating} ({hotel.totalReviews})
+          <span>{hotel.rating}</span><span className="text-brand-300">({hotel.totalReviews})</span>
         </span>
       </div>
 
@@ -74,7 +74,7 @@ const HotelCard = memo(({ hotel, priority = false }) => {
       <div className="p-5">
         {/* Hotel Name */}
 
-        <h3 className="font-serif text-[22px] font-semibold leading-tight text-white transition duration-300 group-hover:text-[#D4AF37]">
+        <h3 className="font-serif text-[20px] font-semibold leading-tight text-white transition duration-300 group-hover:text-[#D4AF37]">
           {hotel.name}
         </h3>
 

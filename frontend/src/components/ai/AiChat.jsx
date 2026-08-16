@@ -5,7 +5,6 @@ import {
   Sparkles,
   Send,
   X,
-  MessageCircle,
   MapPin,
   Star,
   BedDouble,
@@ -19,7 +18,6 @@ import {
 import { aiService } from "@/services";
 import { toErrorMessage } from "@/api";
 import { ROUTES, buildPath } from "@/constants/routes";
-import { EASE } from "@/theme/animations";
 
 const GOLD = "#D4AF37";
 const GOLD_LIGHT = "#F1D67A";
@@ -28,9 +26,9 @@ const CREAM = "#F5F1E8";
 const WELCOME = {
   role: "assistant",
   text:
-    "Welcome to AureliaStay Concierge. I’m here to help you discover exceptional hotels, rooms, offers and luxury experiences.",
+    "Welcome to AureliaStay. I’m here to help you discover exceptional hotels, rooms, offers and luxury experiences.",
   suggestions: [
-    "Luxury hotels in Goa",
+    "Luxury hotels in Goa", 
     "Hotels under ₹10,000",
     "5 star hotels with a pool",
     "Show me current offers",
@@ -71,7 +69,7 @@ const getImage = (image) => {
 };
 
 /* =========================================================
-   Premium Avatar
+   Concierge Avatar
 ========================================================= */
 
 const ConciergeAvatar = ({ small = false }) => (
@@ -144,7 +142,10 @@ const HotelResult = ({ hotel }) => {
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <BedDouble size={22} className="text-[#D4AF37]/70" />
+              <BedDouble
+                size={22}
+                className="text-[#D4AF37]/70"
+              />
             </div>
           )}
 
@@ -169,6 +170,7 @@ const HotelResult = ({ hotel }) => {
 
           <p className="mt-1 flex items-center gap-1 truncate text-xs text-[#999]">
             <MapPin size={11} />
+
             {hotel.city || "Luxury destination"}
 
             {hotel.starRating
@@ -230,7 +232,10 @@ const RoomResult = ({ room }) => {
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <BedDouble size={22} className="text-[#D4AF37]/70" />
+              <BedDouble
+                size={22}
+                className="text-[#D4AF37]/70"
+              />
             </div>
           )}
         </div>
@@ -455,7 +460,10 @@ const Message = ({ msg, onSuggestion }) => {
           {msg.hotels?.length > 0 && (
             <div className="mt-3 space-y-2">
               {msg.hotels.map((hotel) => (
-                <HotelResult key={hotel._id} hotel={hotel} />
+                <HotelResult
+                  key={hotel._id}
+                  hotel={hotel}
+                />
               ))}
             </div>
           )}
@@ -463,7 +471,10 @@ const Message = ({ msg, onSuggestion }) => {
           {msg.rooms?.length > 0 && (
             <div className="mt-3 space-y-2">
               {msg.rooms.map((room) => (
-                <RoomResult key={room._id} room={room} />
+                <RoomResult
+                  key={room._id}
+                  room={room}
+                />
               ))}
             </div>
           )}
@@ -471,7 +482,10 @@ const Message = ({ msg, onSuggestion }) => {
           {msg.offers?.length > 0 && (
             <div className="mt-3 space-y-2">
               {msg.offers.map((offer) => (
-                <OfferResult key={offer._id} offer={offer} />
+                <OfferResult
+                  key={offer._id}
+                  offer={offer}
+                />
               ))}
             </div>
           )}
@@ -516,12 +530,14 @@ const Message = ({ msg, onSuggestion }) => {
 
 const AiChat = () => {
   const [open, setOpen] = useState(false);
+
   const [messages, setMessages] = useState([
     {
       ...WELCOME,
       createdAt: new Date(),
     },
   ]);
+
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -568,7 +584,7 @@ const AiChat = () => {
     };
   }, []);
 
-  /* Send message */
+  /* Send */
   const send = async (text) => {
     const message = (text ?? input).trim();
 
@@ -581,7 +597,11 @@ const AiChat = () => {
     };
 
     setInput("");
-    setMessages((previous) => [...previous, userMessage]);
+    setMessages((previous) => [
+      ...previous,
+      userMessage,
+    ]);
+
     setLoading(true);
 
     try {
@@ -640,7 +660,7 @@ const AiChat = () => {
   return (
     <>
       {/* =====================================================
-          Floating Concierge Button
+          Floating AI / Close Button
       ===================================================== */}
 
       <motion.button
@@ -654,23 +674,24 @@ const AiChat = () => {
         className="
           fixed
           bottom-5 right-5
-          z-[80]
+          z-[100]
           flex h-16 w-16
           items-center justify-center
           rounded-full
-          border border-[#F1D67A]/30
+          border border-amber-300
           bg-gradient-to-br
           from-[#8E671A]
           via-[#D4AF37]
           to-[#F6DF91]
           text-[#17130A]
-          shadow-[0_12px_50px_rgba(212,175,55,.30)]
+          shadow-[0_12px_50px_rgba(212,175,55,.35)]
           outline-none
           transition-all
           hover:scale-105
           focus-visible:ring-2
           focus-visible:ring-[#D4AF37]
-          sm:bottom-7 sm:right-7
+          lg:bottom-4 lg:right-4  
+          md:bottom-3 md:right-3
         "
         initial={{
           opacity: 0,
@@ -697,15 +718,26 @@ const AiChat = () => {
           }}
         >
           {open ? (
-            <X size={25} strokeWidth={1.8} />
+            <X
+              size={25}
+              strokeWidth={1.8}
+            />
           ) : (
-            <Sparkles size={25} strokeWidth={1.8} />
+            <Sparkles
+              size={25}
+              strokeWidth={1.8}
+            />
           )}
         </motion.div>
 
         {!open && (
           <motion.span
-            className="absolute inset-0 rounded-full border border-[#D4AF37]/40"
+            className="
+              pointer-events-none
+              absolute inset-0
+              rounded-full
+              border border-[#D4AF37]/40
+            "
             animate={{
               scale: [1, 1.35, 1],
               opacity: [0.6, 0, 0.6],
@@ -720,7 +752,8 @@ const AiChat = () => {
       </motion.button>
 
       {/* =====================================================
-          Chat Window
+          AI Concierge Popup
+          IMPORTANT: positioned ABOVE the close button
       ===================================================== */}
 
       <AnimatePresence>
@@ -728,7 +761,13 @@ const AiChat = () => {
           <>
             {/* Mobile backdrop */}
             <motion.div
-              className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm md:hidden"
+              className="
+                fixed inset-0
+                z-[80]
+                bg-black/60
+                backdrop-blur-sm
+                md:hidden
+              "
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -739,30 +778,46 @@ const AiChat = () => {
               role="dialog"
               aria-modal="true"
               aria-label="AureliaStay Concierge"
+
+              /*
+                IMPORTANT FIX:
+                bottom-24 keeps the popup above
+                the floating close button.
+              */
               className="
                 fixed
-                bottom-0 right-0
-                z-[75]
+                bottom-24
+                right-4
+                z-[90]
+
                 flex
-                h-[min(88vh,760px)]
-                w-full
+                h-[min(78vh,700px)]
+                w-[calc(100vw-2rem)]
+                max-w-[430px]
                 flex-col
                 overflow-hidden
-                border border-[#D4AF37]/15
+
+                rounded-[28px]
+
+                border
+                border-[#D4AF37]/20
+
                 bg-[#080808]/98
+
                 text-[#F5F1E8]
-                shadow-[0_-10px_80px_rgba(0,0,0,.65)]
+
+                shadow-[0_20px_90px_rgba(0,0,0,.75)]
+
                 backdrop-blur-2xl
 
-                sm:bottom-5 sm:right-5
-                sm:h-[min(82vh,700px)]
-                sm:w-[430px]
-                sm:rounded-[28px]
+                sm:bottom-28
+                sm:right-7
+                sm:h-[min(76vh,700px)]
               "
               initial={{
                 opacity: 0,
-                y: 30,
-                scale: 0.96,
+                y: 25,
+                scale: 0.94,
               }}
               animate={{
                 opacity: 1,
@@ -771,8 +826,8 @@ const AiChat = () => {
               }}
               exit={{
                 opacity: 0,
-                y: 30,
-                scale: 0.96,
+                y: 25,
+                scale: 0.94,
               }}
               transition={{
                 duration: 0.32,
@@ -784,14 +839,15 @@ const AiChat = () => {
               ================================================= */}
 
               <div className="relative shrink-0 border-b border-white/[0.07]">
-                {/* Header glow */}
                 <div
                   aria-hidden="true"
                   className="
                     pointer-events-none
                     absolute
-                    left-1/2 top-0
-                    h-24 w-48
+                    left-1/2
+                    top-0
+                    h-24
+                    w-48
                     -translate-x-1/2
                     rounded-full
                     bg-[#D4AF37]/[0.08]
@@ -805,29 +861,44 @@ const AiChat = () => {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <h2 className="truncate font-serif text-[16px] font-medium text-[#F5F1E8]">
-                        AureliaStay Concierge
+                        <span>Aurelia</span> <span className="text-amber-300">Stay</span>
                       </h2>
 
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,.8)]" />
+                      <span
+                        className="
+                          h-1.5
+                          w-1.5
+                          rounded-full
+                          bg-emerald-400
+                          shadow-[0_0_8px_rgba(52,211,153,.8)]
+                        "
+                      />
                     </div>
 
                     <p className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-[#777]">
-                      Private Luxury Travel Assistant
+                      LUXURY HOTEL BOOKING ASSISTANT
                     </p>
                   </div>
 
+                  {/* Header close */}
                   <button
                     type="button"
                     onClick={() => setOpen(false)}
                     aria-label="Close concierge"
                     className="
-                      flex h-9 w-9
-                      items-center justify-center
+                      flex
+                      h-9
+                      w-9
+                      shrink-0
+                      items-center
+                      justify-center
                       rounded-full
-                      border border-white/[0.07]
+                      border
+                      border-white/[0.07]
                       text-[#777]
                       transition
                       hover:border-[#D4AF37]/30
+                      hover:bg-[#D4AF37]/10
                       hover:text-[#D4AF37]
                     "
                   >
@@ -835,10 +906,10 @@ const AiChat = () => {
                   </button>
                 </div>
 
-                {/* Gold line */}
                 <motion.div
                   className="
                     h-px
+                    origin-center
                     bg-gradient-to-r
                     from-transparent
                     via-[#D4AF37]/50
@@ -857,10 +928,12 @@ const AiChat = () => {
               <div
                 ref={scrollRef}
                 className="
+                  min-h-0
                   flex-1
                   space-y-5
                   overflow-y-auto
-                  px-4 py-5
+                  px-4
+                  py-5
                   scrollbar-thin
                   scrollbar-track-transparent
                   scrollbar-thumb-[#D4AF37]/20
@@ -869,7 +942,9 @@ const AiChat = () => {
               >
                 {messages.map((message, index) => (
                   <Message
-                    key={`${message.createdAt?.getTime?.() || index}-${index}`}
+                    key={`${
+                      message.createdAt?.getTime?.() || index
+                    }-${index}`}
                     msg={message}
                     onSuggestion={handleSuggestion}
                   />
@@ -879,10 +954,18 @@ const AiChat = () => {
               </div>
 
               {/* =================================================
-                  Input Area
+                  Input
               ================================================= */}
 
-              <div className="shrink-0 border-t border-white/[0.07] bg-[#080808]/95 p-3">
+              <div
+                className="
+                  shrink-0
+                  border-t
+                  border-white/[0.07]
+                  bg-[#080808]/95
+                  p-3
+                "
+              >
                 <form onSubmit={handleSubmit}>
                   <div
                     className="
@@ -890,7 +973,8 @@ const AiChat = () => {
                       items-end
                       gap-2
                       rounded-2xl
-                      border border-white/[0.08]
+                      border
+                      border-white/[0.08]
                       bg-white/[0.035]
                       p-2
                       transition
@@ -902,7 +986,9 @@ const AiChat = () => {
                       ref={inputRef}
                       rows={1}
                       value={input}
-                      onChange={(event) => setInput(event.target.value)}
+                      onChange={(event) =>
+                        setInput(event.target.value)
+                      }
                       onKeyDown={handleKeyDown}
                       placeholder="Ask about your perfect stay..."
                       aria-label="Message AureliaStay Concierge"
@@ -926,13 +1012,14 @@ const AiChat = () => {
                       type="submit"
                       disabled={loading || !input.trim()}
                       aria-label="Send message"
-                      whileTap={{
-                        scale: 0.9,
-                      }}
+                      whileTap={{ scale: 0.9 }}
                       className="
-                        flex h-10 w-10
+                        flex
+                        h-10
+                        w-10
                         shrink-0
-                        items-center justify-center
+                        items-center
+                        justify-center
                         rounded-xl
                         bg-gradient-to-br
                         from-[#C69A2B]
@@ -948,7 +1035,14 @@ const AiChat = () => {
                     >
                       {loading ? (
                         <motion.span
-                          className="h-4 w-4 rounded-full border-2 border-[#17130A]/30 border-t-[#17130A]"
+                          className="
+                            h-4
+                            w-4
+                            rounded-full
+                            border-2
+                            border-[#17130A]/30
+                            border-t-[#17130A]
+                          "
                           animate={{
                             rotate: 360,
                           }}

@@ -456,21 +456,38 @@ class HotelService {
   }
 
   /**
-   * Soft delete hotel.
+   * Permanently delete a hotel.
    *
-   * Cascades the deactivation to the hotel's active rooms so an inactive hotel
-   * never leaves active rooms behind (or stale room-count / price data on the
-   * public listings), then clears every hotel, room and detail cache key so
-   * neither the admin panel nor the public site serve the pre-delete state.
+   * Hard-deletes the document so it can never reappear in the admin panel or
+   * on the public site after a refetch, cascades the deactivation to the
+   * hotel's active rooms so no active rooms are left behind (or stale
+   * room-count / price data on listings), best-effort deletes its Cloudinary
+   * assets, then clears every hotel, room and detail cache key so neither the
+   * admin panel nor the public site serve the pre-delete state.
    */
   async deleteHotel(id) {
-    const hotel = await Hotel.findByIdAndUpdate(id, { isActive: false }, { new: true });
+    const hotel = await Hotel.findById(id);
     if (!hotel) {
       throw ApiError.notFound("Hotel not found.");
     }
 
+    // Best-effort: remove Cloudinary assets so orphaned files never leak.
+    // A failure here must not block the database deletion.
+    const publicIds = (hotel.images || [])
+      .map((img) => img.publicId)
+      .filter(Boolean);
+    await Promise.all(
+      publicIds.map((publicId) =>
+        deleteFromCloudinary(publicId).catch((error) => {
+          console.error(`Failed to delete Cloudinary image ${publicId}:`, error);
+        })
+      )
+    );
+
     // Cascade: soft-delete any active rooms belonging to this hotel.
     await Room.updateMany({ hotel: hotel._id, isActive: true }, { isActive: false });
+
+    await Hotel.findByIdAndDelete(hotel._id);
 
     await Promise.all([
       deleteCacheByPattern("hotel:*"),

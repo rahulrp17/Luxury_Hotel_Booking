@@ -138,9 +138,13 @@ const AdminHotels = () => {
 
   const deleteMutation = useOptimisticDelete({
     deleteFn: (id) => hotelService.adminDelete(id),
+    // Hard delete: the backend permanently removes the hotel, so the admin
+    // list must drop the row and the cache is only touched after the API
+    // confirms success (no optimistic flip to "inactive").
+    optimistic: false,
     keys: [
-      // Admin list keeps the row but flips it to inactive (soft delete contract).
-      { key: ["admin", "hotels"], mode: "deactivate" },
+      // Admin list drops the row entirely (permanent delete contract).
+      { key: ["admin", "hotels"], mode: "remove" },
       // Public lists/detail drop the hotel entirely.
       { key: ["hotels"], mode: "remove" },
       { key: ["hotel"], mode: "remove" },
@@ -570,7 +574,7 @@ const AdminHotels = () => {
         title="Remove this hotel?"
         description={
           deleteTarget
-            ? `"${deleteTarget.name}" and its rooms will be deactivated and hidden from the site. You can re-activate it later from this list.`
+            ? `"${deleteTarget.name}" and its rooms will be permanently deleted. This action cannot be undone.`
             : undefined
         }
       />

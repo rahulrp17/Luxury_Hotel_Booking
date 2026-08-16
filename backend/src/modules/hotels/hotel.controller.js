@@ -57,8 +57,8 @@ const updateHotel = asyncHandler(async (req, res) => {
 });
 
 const deleteHotel = asyncHandler(async (req, res) => {
-  await hotelService.deleteHotel(req.params.id);
-  return ApiResponse.success(res, "Hotel deleted successfully.");
+  const hotel = await hotelService.deleteHotel(req.params.id);
+  return ApiResponse.success(res, "Hotel deleted successfully.", hotel);
 });
 
 const addHotelImages = asyncHandler(async (req, res) => {

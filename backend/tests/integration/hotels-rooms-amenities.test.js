@@ -15,6 +15,7 @@ const {
 } = require("../helpers/app");
 const Hotel = require("../../src/modules/hotels/hotel.model");
 const Room = require("../../src/modules/rooms/room.model");
+const cloudinary = require("cloudinary");
 const {
   createAdmin,
   createUser,
@@ -235,7 +236,7 @@ describe("HOTELS — detail, nearby, search", () => {
     expect(res.body.data.primaryImage).toBeDefined();
   });
 
-  test("GET /api/v1/hotels/:id returns 404 after DELETE (soft delete)", async () => {
+  test("GET /api/v1/hotels/:id returns 404 after DELETE (hard delete)", async () => {
     const hotel = await seedHotels({ name: "Delete Me" });
 
     const del = await agent().delete(`/api/v1/hotels/${hotel._id}`).set(adminToken);
@@ -311,7 +312,7 @@ describe("HOTELS — admin CRUD & authorization", () => {
     expect(userToken.status).toBe(403);
   });
 
-  test("PUT /api/v1/hotels/:id updates and DELETE returns no data", async () => {
+  test("PUT /api/v1/hotels/:id updates and DELETE returns the deleted hotel", async () => {
     const hotel = await seedHotels({ name: "Put Me" });
 
     const put = await agent().put(`/api/v1/hotels/${hotel._id}`).set(adminToken).send({ name: "Updated Name" });
@@ -320,7 +321,9 @@ describe("HOTELS — admin CRUD & authorization", () => {
 
     const del = await agent().delete(`/api/v1/hotels/${hotel._id}`).set(adminToken);
     expect(del.status).toBe(200);
-    expect(del.body.data).toBeUndefined();
+    // The DELETE contract returns the removed hotel so the client can drop it
+    // from every cache without relying on a follow-up refetch.
+    expect(del.body.data._id).toEqual(hotel._id.toString());
   });
 
   test("DELETE /api/v1/hotels/:id cascades to deactivate its active rooms", async () => {
@@ -345,6 +348,51 @@ describe("HOTELS — admin CRUD & authorization", () => {
 
     const roomDocs = await Room.find({ hotel: hotel._id, isActive: true });
     expect(roomDocs).toHaveLength(0);
+  });
+
+  test("DELETE /api/v1/hotels/:id hard-deletes, cleans up Cloudinary assets and returns the deleted hotel", async () => {
+    const hotel = await seedHotels({
+      name: "Image Delete Hotel",
+      images: [
+        { url: "https://res.cloudinary.com/test/hotels/delete-me.jpg", publicId: "luxury-hotel/hotels/delete-me", isPrimary: true },
+        { url: "https://res.cloudinary.com/test/hotels/delete-me-2.jpg", publicId: "luxury-hotel/hotels/delete-me-2", isPrimary: false },
+      ],
+    });
+
+    cloudinary.v2.uploader.destroy.mockClear();
+
+    const del = await agent().delete(`/api/v1/hotels/${hotel._id}`).set(adminToken);
+    expect(del.status).toBe(200);
+    expect(del.body.success).toBe(true);
+    expect(del.body.data._id).toEqual(hotel._id.toString());
+
+    // Both Cloudinary assets were removed.
+    expect(cloudinary.v2.uploader.destroy).toHaveBeenCalledWith("luxury-hotel/hotels/delete-me");
+    expect(cloudinary.v2.uploader.destroy).toHaveBeenCalledWith("luxury-hotel/hotels/delete-me-2");
+
+    // The document is gone from MongoDB (hard delete) and the API 404s.
+    const gone = await Hotel.findById(hotel._id);
+    expect(gone).toBeNull();
+
+    const res = await agent().get(`/api/v1/hotels/${hotel._id}`);
+    expect(res.status).toBe(404);
+  });
+
+  test("DELETE /api/v1/hotels/:id of an imageless hotel hard-deletes without touching Cloudinary", async () => {
+    const hotel = await seedHotels({ name: "Imageless Delete Hotel", images: [] });
+
+    cloudinary.v2.uploader.destroy.mockClear();
+
+    const del = await agent().delete(`/api/v1/hotels/${hotel._id}`).set(adminToken);
+    expect(del.status).toBe(200);
+    expect(del.body.data._id).toEqual(hotel._id.toString());
+    expect(cloudinary.v2.uploader.destroy).not.toHaveBeenCalled();
+
+    const gone = await Hotel.findById(hotel._id);
+    expect(gone).toBeNull();
+
+    const res = await agent().get(`/api/v1/hotels/${hotel._id}`);
+    expect(res.status).toBe(404);
   });
 });
 

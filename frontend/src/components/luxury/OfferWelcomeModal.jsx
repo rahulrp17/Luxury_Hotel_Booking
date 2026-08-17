@@ -9,23 +9,21 @@ import useEscapeKey from "@/hooks/useEscapeKey";
 import useLockBodyScroll from "@/hooks/useLockBodyScroll";
 import useFocusTrap from "@/hooks/useFocusTrap";
 import { offerService } from "@/services";
-import { storage } from "@/utils/storage";
 import { QUERY_KEYS } from "@/constants/queryKeys";
 import { ROUTES } from "@/constants/routes";
 import { getFallbackAsset } from "@/constants/assets";
 import { getOfferDiscountLabel, getOfferValidityLabel } from "@/utils/offerUtils";
 import { EASE } from "@/theme/animations";
 
-const DISMISS_KEY = "lux_hb_welcome_offer_dismissed";
-const DISMISSAL_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 const OPEN_DELAY_MS = 1600;
 
-/** Has the user already dismissed this offer within the cooldown window? */
-const isDismissed = (offer) => {
-  const record = storage.get(DISMISS_KEY);
-  if (!record?.offerId || record.offerId !== offer?._id) return false;
-  return Date.now() - Number(record.dismissedAt || 0) < DISMISSAL_COOLDOWN_MS;
-};
+// Session-only dismissal: a module-level flag (not localStorage) so the popup
+// re-appears on every page refresh, while still not re-opening right after the
+// user closes it during the current page / SPA session.
+let dismissedOfferId = null;
+
+/** Has the user already dismissed this offer in this page session? */
+const isDismissed = (offer) => dismissedOfferId === offer?._id;
 
 /**
  * Premium entrance-offer popup for the homepage.
@@ -34,9 +32,9 @@ const isDismissed = (offer) => {
  * offer (GET /offers/active?limit=1 — the API only returns currently valid,
  * redeemable offers, newest first, so `data[0]` is the one to feature) and
  * presents it as a black-and-gold luxury modal using the offer's own banner
- * image. Dismissal (✕ / Escape / backdrop) is persisted in localStorage so the
- * same offer is not re-shown within the cooldown window, while a freshly
- * published offer always appears. Rendered through a portal at the top overlay
+ * image. Dismissal (✕ / Escape / backdrop) is remembered only for the current
+ * page session, so the popup returns on the next refresh while not re-opening
+ * immediately after closing. Rendered through a portal at the top overlay
  * layer, centered and responsive, with a dimmed/blurred backdrop, body scroll
  * lock and a focus trap — so it never shifts layout, never duplicates, and
  * never opens beneath another modal.
@@ -78,9 +76,7 @@ const OfferWelcomeModal = () => {
   }, [pageReady, latest]);
 
   const close = useCallback(() => {
-    if (latest) {
-      storage.set(DISMISS_KEY, { offerId: latest._id, dismissedAt: Date.now() });
-    }
+    if (latest) dismissedOfferId = latest._id;
     setOpen(false);
   }, [latest]);
 

@@ -37,6 +37,24 @@
   /* Fonts */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+
+  /* ── Z-index layer scale ────────────────────────────────────────
+     Small, semantic values so stacking order is explicit instead of
+     one-off numbers scattered across components. Promote a new layer
+     here rather than bumping an element past the top.
+
+     40  floating utility buttons (scroll-to-top, FAB)
+     50  sticky navbar, mega-menu dropdowns, tooltips
+     60  AI concierge widget band (scroll-progress bar, chat backdrop,
+         floating toggle, chat panel)
+     70  modal & drawer overlays (portaled, cover everything)
+  */
+  --z-index-floating: 40;
+  --z-index-navbar: 50;
+  --z-index-widget: 60;
+  --z-index-widget-toggle: 61;
+  --z-index-widget-panel: 62;
+  --z-index-overlay: 70;
 }
 
 /* ================================================================

@@ -47,7 +47,7 @@ const Drawer = ({
   return createPortal(
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 ">
+        <div className="fixed inset-0 z-overlay">
           <motion.div
             aria-hidden="true"
             className={`absolute inset-0 ${backdropClassName}`}
@@ -68,8 +68,13 @@ const Drawer = ({
             exit="hidden"
             transition={{ duration: 0.32, ease: EASE }}
           >
-            <div className={`flex items-center justify-between border-b px-5 py-4 ${headerClassName}`}>
-              <h2 id={titleId} className={`font-serif text-lg font-semibold ${titleClassName}`}>
+            <div
+              className={`flex items-center justify-between border-b px-5 py-4 ${headerClassName}`}
+            >
+              <h2
+                id={titleId}
+                className={`font-serif text-lg font-semibold ${titleClassName}`}
+              >
                 {title}
               </h2>
               <button
@@ -86,7 +91,7 @@ const Drawer = ({
         </div>
       )}
     </AnimatePresence>,
-    document.body
+    document.body,
   );
 };
 

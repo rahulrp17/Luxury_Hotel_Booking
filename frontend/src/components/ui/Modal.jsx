@@ -54,7 +54,7 @@ const Modal = ({
   return createPortal(
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
+        <div className="fixed inset-0 z-overlay flex items-end justify-center p-4 sm:items-center">
           <motion.div
             aria-hidden="true"
             className={`absolute inset-0 ${backdropCls}`}

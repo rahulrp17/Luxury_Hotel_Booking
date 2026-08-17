@@ -647,7 +647,7 @@ const AiChat = () => {
         className="
           fixed
           bottom-5 right-5
-          z-[100]
+          z-widget-toggle
           flex h-13 w-13
           items-center justify-center
           rounded-full
@@ -730,7 +730,7 @@ const AiChat = () => {
             <motion.div
               className="
                 fixed inset-0
-                z-[80]
+                z-widget
                 bg-black/60
                 backdrop-blur-sm
                 md:hidden
@@ -754,7 +754,7 @@ const AiChat = () => {
                 fixed
                 bottom-24
                 right-4
-                z-[90]
+                z-widget-panel
 
                 flex
                 h-[min(78vh,700px)]

@@ -403,7 +403,7 @@ const PoliciesSection = memo(function PoliciesSection({ hotel }) {
         <ul className="space-y-1.5">
           <li>Pets {p.petsAllowed ? "are welcome" : "are not permitted"}.</li>
           <li>Smoking {p.smokingAllowed ? "is permitted in designated areas" : "is not permitted"}.</li>
-          <li>Children {p.childrenAllowed ? "are welcome" : "are not permitted"}.</li>
+          {/* <li>Children {p.childrenAllowed ? "are welcome" : "are not permitted"}.</li> */}
         </ul>
       ),
     },

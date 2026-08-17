@@ -244,6 +244,14 @@ const Hero = () => {
                   Jaipur
                 </option>
 
+                <option value="NewDelhi" className="bg-[#111111] text-white">
+                  New Delhi
+                </option>
+
+                <option value="Kolkata" className="bg-[#111111] text-white">
+                  Kolkata
+                </option>
+
                 <option value="Muzaffarpur" className="bg-[#111111] text-white">
                   Muzaffarpur
                 </option>

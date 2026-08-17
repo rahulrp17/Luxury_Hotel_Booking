@@ -12,8 +12,15 @@ import {
   LogOut,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { logout, selectIsAuthenticated, selectUser } from "@/store/slices/authSlice";
-import { selectUnreadCount, fetchUnreadCount } from "@/store/slices/notificationSlice";
+import {
+  logout,
+  selectIsAuthenticated,
+  selectUser,
+} from "@/store/slices/authSlice";
+import {
+  selectUnreadCount,
+  fetchUnreadCount,
+} from "@/store/slices/notificationSlice";
 import { ROUTES } from "@/constants/routes";
 import { USER_ROLES } from "@/constants/enums";
 import useScrolled from "@/hooks/useScrolled";
@@ -215,10 +222,15 @@ const Navbar = () => {
   const accountLinks = [
     { to: ROUTES.PROFILE, label: "Profile", icon: <User size={16} /> },
     { to: ROUTES.BOOKINGS, label: "My Bookings", icon: <Calendar size={16} /> },
-    { to: ROUTES.NOTIFICATIONS, label: "Notifications", icon: <Bell size={16} /> },
+    {
+      to: ROUTES.NOTIFICATIONS,
+      label: "Notifications",
+      icon: <Bell size={16} />,
+    },
   ];
 
-  const glassIcon = "flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-cream/85 backdrop-blur-md transition-all duration-300 hover:border-gold-400/50 hover:text-gold-300 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-950";
+  const glassIcon =
+    "flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-cream/85 backdrop-blur-md transition-all duration-300 hover:border-gold-400/50 hover:text-gold-300 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-950";
 
   return (
     <>
@@ -235,8 +247,17 @@ const Navbar = () => {
           } grid-cols-[1fr_auto] gap-4 xl:grid-cols-[260px_minmax(0,1fr)_420px] xl:gap-0`}
         >
           {/* Logo */}
-          <motion.span variants={brandMark} initial="hidden" animate="visible" className="justify-self-start">
-            <Link to={ROUTES.HOME} className="group flex items-baseline gap-1" aria-label="AureliaStay home">
+          <motion.span
+            variants={brandMark}
+            initial="hidden"
+            animate="visible"
+            className="justify-self-start"
+          >
+            <Link
+              to={ROUTES.HOME}
+              className="group flex items-baseline gap-1"
+              aria-label="AureliaStay home"
+            >
               <span className="font-serif text-[1.7rem] font-semibold tracking-tight text-cream transition-transform duration-500 group-hover:scale-[1.02]">
                 Aurelia
               </span>
@@ -252,7 +273,11 @@ const Navbar = () => {
               Home
             </NavLink>
             <MegaMenu label="Hotels" to={ROUTES.HOTELS} {...HOTELS_MEGA} />
-            <MegaMenu label="Experiences" to={ROUTES.EXPERIENCES} {...EXPERIENCES_MEGA} />
+            <MegaMenu
+              label="Experiences"
+              to={ROUTES.EXPERIENCES}
+              {...EXPERIENCES_MEGA}
+            />
             <MegaMenu label="Dining" to={ROUTES.DINING} {...DINING_MEGA} />
             <MegaMenu label="About" to={ROUTES.ABOUT} {...ABOUT_MEGA} />
             <MegaMenu label="Contact" to={ROUTES.CONTACT} {...CONTACT_MEGA} />
@@ -260,15 +285,28 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className="flex items-center justify-end gap-2">
-            <button type="button" aria-label="Search" className={glassIcon} onClick={() => setSearchOpen(true)}>
+            <button
+              type="button"
+              aria-label="Search"
+              className={` cursor-pointer ${glassIcon}`}
+              onClick={() => setSearchOpen(true)}
+            >
               <Search size={16} />
             </button>
 
             <button
               type="button"
-              aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : "Notifications"}
-              onClick={() => (isAuthenticated ? navigate(ROUTES.NOTIFICATIONS) : setNotifLoginOpen(true))}
-              className={`relative ${glassIcon}`}
+              aria-label={
+                unreadCount > 0
+                  ? `Notifications (${unreadCount} unread)`
+                  : "Notifications"
+              }
+              onClick={() =>
+                isAuthenticated
+                  ? navigate(ROUTES.NOTIFICATIONS)
+                  : setNotifLoginOpen(true)
+              }
+              className={`relative cursor-pointer ${glassIcon}`}
             >
               <Bell size={16} />
               {unreadCount > 0 && (
@@ -294,13 +332,16 @@ const Navbar = () => {
                   aria-hidden="true"
                 />
                 Reserve Stay
-                <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+                <ArrowRight
+                  size={14}
+                  className="transition-transform duration-300 group-hover:translate-x-0.5"
+                />
               </Link>
             </Magnetic>
 
             {isAuthenticated ? (
               <Dropdown
-                 className=" pt-3"
+                className=" pt-3"
                 trigger={
                   user?.avatar?.url ? (
                     <img

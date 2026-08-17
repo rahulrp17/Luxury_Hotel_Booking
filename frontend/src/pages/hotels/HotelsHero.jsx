@@ -164,6 +164,20 @@ const HotelsHero = ({ initial = {}, onSearch }) => {
                 >
                   Bengaluru
                 </option>
+
+                <option
+                  value="Kolkata"
+                  className="bg-[#111111] text-white"
+                >
+                  Kolkata
+                </option>
+
+                <option
+                  value="NewDelhi"
+                  className="bg-[#111111] text-white"
+                >
+                  New Delhi
+                </option>
               </select>
             </label>
 

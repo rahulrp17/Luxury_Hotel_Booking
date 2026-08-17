@@ -69,7 +69,7 @@ const Dropdown = ({
             role="menu"
             className={`absolute z-[9999] mt-2 min-w-48 max-w-[calc(100vw-24px)] rounded-xl border p-1.5 shadow-lg ${ALIGN[align]} ${dark
                 ? "border-[#D4AF37]/20 bg-[#0A0A0A]/95 shadow-[0_24px_70px_rgba(0,0,0,0.65),0_0_35px_rgba(212,175,55,0.12)] backdrop-blur-[20px]"
-                : "border-brand-100 bg-white shadow-lg"
+                : "border-amber-300 bg-black shadow-lg"
               }`}
             initial={{ opacity: 0, y: -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -96,15 +96,15 @@ const DropdownItem = ({ children, onClick, icon, className = "" }) => {
           : "text-brand-700 hover:bg-brand-50 hover:text-gold-600"
         } ${className}`}
     >
-      {icon && <span className={dark ? "text-[#C9AB4B]" : "text-brand-400"}>{icon}</span>}
-      {children}
+      {icon && <span className={dark ? "text-[#C9AB4B]" : "text-amber-400"}>{icon}</span>}
+      <span className="text-amber-300">{children}</span>
     </button>
   );
 };
 
 const DropdownDivider = () => {
   const dark = useContext(DropdownContext);
-  return <div className={`my-1.5 h-px ${dark ? "bg-[#D4AF37]/15" : "bg-brand-100"}`} />;
+  return <div className={`my-1.5 h-px ${dark ? "bg-[#D4AF37]/15" : "bg-amber-200"}`} />;
 };
 
 Dropdown.Item = DropdownItem;

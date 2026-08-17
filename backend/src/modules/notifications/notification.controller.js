@@ -4,7 +4,7 @@ const asyncHandler = require("../../utils/asyncHandler");
 
 const getUserNotifications = asyncHandler(async (req, res) => {
   const result = await notificationService.getUserNotifications(req.user._id, req.query);
-  return ApiResponse.paginated(res, "Notifications fetched.", result.notifications, result.pagination);
+  return ApiResponse.paginated(res, "Notifications fetched.", result.notifications, result.pagination, result.unreadCount);
 });
 
 const markAsRead = asyncHandler(async (req, res) => {

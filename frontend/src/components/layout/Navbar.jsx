@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout, selectIsAuthenticated, selectUser } from "@/store/slices/authSlice";
-import { selectUnreadCount } from "@/store/slices/notificationSlice";
+import { selectUnreadCount, fetchUnreadCount } from "@/store/slices/notificationSlice";
 import { ROUTES } from "@/constants/routes";
 import { USER_ROLES } from "@/constants/enums";
 import useScrolled from "@/hooks/useScrolled";
@@ -189,6 +189,23 @@ const Navbar = () => {
 
   const isAdmin = user?.role === USER_ROLES.ADMIN;
 
+  // Keep the bell's unread dot in sync with the notification API: fetch on
+  // mount / auth change, on window focus (tab return), and on a light 60s poll
+  // so newly-created notifications surface without a manual refresh. Only runs
+  // for authenticated users; the lightweight thunk never touches the list.
+  useEffect(() => {
+    if (!isAuthenticated) return undefined;
+
+    const syncUnread = () => dispatch(fetchUnreadCount());
+    syncUnread();
+    const timer = setInterval(syncUnread, 60_000);
+    window.addEventListener("focus", syncUnread);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener("focus", syncUnread);
+    };
+  }, [isAuthenticated, dispatch]);
+
   const handleLogout = async () => {
     await dispatch(logout());
     setMobileOpen(false);
@@ -256,13 +273,12 @@ const Navbar = () => {
               <Bell size={16} />
               {unreadCount > 0 && (
                 <motion.span
-                  key={unreadCount}
+                  key="unread-dot"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold-500 px-1 text-[10px] font-bold text-brand-950"
-                >
-                  {unreadCount}
-                </motion.span>
+                  aria-hidden="true"
+                  className="absolute -right-0.5 -top-0.3 h-2.5 w-2.5 rounded-full bg-gold-500 shadow-[0_0_10px_rgba(212,175,55,0.9)]"
+                />
               )}
             </button>
 

@@ -994,6 +994,7 @@ describe("Users, Offers, Reviews, Home, Stats, Notifications — /api/v1", () =>
       expect(res.body.data.length).toBe(2);
       expect(res.body.pagination.total).toBe(2);
       expect(res.body.data.every((n) => n.user.toString() === user._id.toString())).toBe(true);
+      expect(res.body.unreadCount).toBe(2);
 
       const anon = await agent().get("/api/v1/notifications");
       expect(anon.status).toBe(401);
@@ -1010,6 +1011,7 @@ describe("Users, Offers, Reviews, Home, Stats, Notifications — /api/v1", () =>
       expect(res.status).toBe(200);
       expect(res.body.data).toHaveLength(1);
       expect(res.body.data[0].isRead).toBe(false);
+      expect(res.body.unreadCount).toBe(1);
     });
 
     test("PATCH /read-all marks all the owner's notifications as read", async () => {

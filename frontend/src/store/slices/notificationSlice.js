@@ -22,6 +22,25 @@ export const fetchNotifications = createAsyncThunk(
   }
 );
 
+// Lightweight unread-only sync. Uses a single-row `unreadOnly` query so the
+// backend still returns the true unreadCount, without replacing the full list
+// cached in the store (used by the notifications inbox / account overview).
+export const fetchUnreadCount = createAsyncThunk(
+  "notification/fetchUnreadCount",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await notificationService.getMyNotifications({
+        unreadOnly: "true",
+        page: 1,
+        limit: 1,
+      });
+      return Number(res?.unreadCount) || 0;
+    } catch (error) {
+      return rejectWithValue(extractErrorMessage(error));
+    }
+  }
+);
+
 export const markAllRead = createAsyncThunk(
   "notification/markAllRead",
   async (_, { rejectWithValue }) => {
@@ -79,6 +98,12 @@ const notificationSlice = createSlice({
       })
       .addCase(fetchNotifications.rejected, (state, action) => {
         state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchUnreadCount.fulfilled, (state, action) => {
+        state.unreadCount = action.payload ?? 0;
+      })
+      .addCase(fetchUnreadCount.rejected, (state, action) => {
         state.error = action.payload;
       })
       .addCase(markAllRead.fulfilled, (state) => {

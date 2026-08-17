@@ -2,12 +2,13 @@
  * Standardized API Response Wrapper
  */
 class ApiResponse {
-  constructor(statusCode, message, data = null, pagination = null) {
+  constructor(statusCode, message, data = null, pagination = null, unreadCount = null) {
     this.success = statusCode >= 200 && statusCode < 400;
     this.statusCode = statusCode;
     this.message = message;
     if (data !== null) this.data = data;
     if (pagination !== null) this.pagination = pagination;
+    if (unreadCount !== null) this.unreadCount = unreadCount;
     this.timestamp = new Date().toISOString();
   }
 
@@ -19,8 +20,8 @@ class ApiResponse {
     return res.status(201).json(new ApiResponse(201, message, data));
   }
 
-  static paginated(res, message = "Data fetched successfully", data, pagination) {
-    return res.status(200).json(new ApiResponse(200, message, data, pagination));
+  static paginated(res, message = "Data fetched successfully", data, pagination, unreadCount) {
+    return res.status(200).json(new ApiResponse(200, message, data, pagination, unreadCount));
   }
 
   static noContent(res) {

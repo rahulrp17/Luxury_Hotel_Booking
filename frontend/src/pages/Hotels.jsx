@@ -277,7 +277,7 @@ const Hotels = () => {
         </Container>
       </Section>
 
-      <Drawer open={filtersOpen} onClose={() => setFiltersOpen(false)} title="Refine Your Stay" width="max-w-md" side="left">
+      <Drawer open={filtersOpen} onClose={() => setFiltersOpen(false)} title="Refine Your Stay" titleClassName="text-amber-300" closeClassName="text-amber-300 border border-amber-300 hover:bg-amber-100 hover:text-amber-800" color="text-white" width="max-w-md" side="left">
         <div className="min-h-full bg-[#090909] p-1 text-white">
           {filtersContent}
         </div>

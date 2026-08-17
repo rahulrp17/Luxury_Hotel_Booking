@@ -94,8 +94,8 @@ const HotelsHero = ({ initial = {}, onSearch }) => {
           <motion.form
             variants={fadeInUp}
             onSubmit={submit}
-            aria-label="Search hotels"
-            className="mx-auto mt-8 grid w-full max-w-4xl gap-3 rounded-2xl border border-white/15 bg-white/10 p-3 text-left shadow-2xl backdrop-blur-xl sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_1fr]"
+            aria-label="Search hotels "
+            className="mx-auto mt-8 hidden  lg:grid w-full max-w-4xl gap-3 rounded-2xl border border-white/15 bg-white/10 p-3 text-left shadow-2xl backdrop-blur-xl sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_1fr]"
           >
             {/* Destination */}
             <label className="flex cursor-pointer flex-col gap-1 px-2 py-1">

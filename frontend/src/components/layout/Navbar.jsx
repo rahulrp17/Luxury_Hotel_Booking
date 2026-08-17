@@ -315,7 +315,7 @@ const Navbar = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   aria-hidden="true"
-                  className="absolute -right-0.5 -top-0.3 h-2.5 w-2.5 rounded-full bg-gold-500 shadow-[0_0_10px_rgba(212,175,55,0.9)]"
+                  className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-gold-500 shadow-[0_0_10px_rgba(212,175,55,0.9)]"
                 />
               )}
             </button>

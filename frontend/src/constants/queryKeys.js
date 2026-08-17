@@ -14,6 +14,7 @@ export const QUERY_KEYS = Object.freeze({
   BOOKING_DETAIL: "booking-detail",
   NOTIFICATIONS: "notifications",
   OFFERS: "offers",
+  ACTIVE_OFFERS: "active-offers",
   REVIEWS: "reviews",
   AMENITIES: "amenities",
   ANALYTICS: "analytics",

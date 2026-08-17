@@ -8,6 +8,7 @@ import Hero from "./home/Hero";
 import FeaturedHotels from "./home/FeaturedHotels";
 import FeaturedRooms from "./home/FeaturedRooms";
 import FloatingContactButtons from "./home/FloatingContactButtons";
+import OfferWelcomeModal from "@/components/luxury/OfferWelcomeModal";
 
 /**
  * Below-the-fold sections are code-split (React.lazy) and deferred until they
@@ -120,6 +121,9 @@ const Home = () => {
 
       {/* Home-only floating concierge buttons (WhatsApp + phone) */}
       <FloatingContactButtons />
+
+      {/* Entrance offer popup — latest active offer, after page load */}
+      <OfferWelcomeModal />
     </>
   );
 };
